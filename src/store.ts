@@ -63,7 +63,9 @@ export interface State {
     grid: Grid,
     functions: Function[],
     stack: Instruction[],
-    selectedInstruction: SelectedInstruction
+    selectedInstruction: SelectedInstruction,
+    step: number
+    playing: boolean
 }
 export const key: InjectionKey<Store<State>> = Symbol()
 
@@ -145,7 +147,9 @@ export const store = createStore<State>({
         selectedInstruction: {
             functionIndex: 0,
             instructionIndex: 0
-        }
+        },
+        step: 0,
+        playing: false
     },
     getters: {
         getCellByRowCol: (state) => (row: number, col: number): Cell | null => {
@@ -213,6 +217,88 @@ export const store = createStore<State>({
             Object.assign(selectedInstruction, {
                 ...selectedInstruction,
                 color: payload
+            })
+        },
+        play(state) {
+            state.playing = true
+        },
+        stop(state) {
+            state.playing = false
+            state.step = 0
+        },
+        step(state) {
+            // TODO pop current stack
+            const instruction = state.stack.shift()
+            if (!instruction) return;
+            state.step += 1
+
+            const shipCell = state.grid.cells[state.ship.col + state.ship.row * state.grid.cols]
+
+            if (instruction.type === InstructionType.CALL_FUNCTION) {
+                if (instruction.payload === undefined) return
+                const func = state.functions[instruction.payload]
+                const instructions = func.instructions
+                    .filter(instruction => instruction.type !== InstructionType.PASS)
+                state.stack.unshift(...instructions)
+            } else if (instruction.type === InstructionType.FORWARD) {
+                if (instruction.color) {
+                    if (shipCell.color !== instruction.color)
+                        return
+                }
+
+                if (state.ship.direction === Direction.TOP) {
+                    Object.assign(state.ship, {
+                        ...state.ship,
+                        row: state.ship.row - 1
+                    })
+                } else if (state.ship.direction === Direction.BOTTOM) {
+                    Object.assign(state.ship, {
+                        ...state.ship,
+                        row: state.ship.row + 1
+                    })
+                } else if (state.ship.direction === Direction.LEFT) {
+                    Object.assign(state.ship, {
+                        ...state.ship,
+                        col: state.ship.col - 1
+                    })
+                } else if (state.ship.direction === Direction.RIGHT) {
+                    Object.assign(state.ship, {
+                        ...state.ship,
+                        col: state.ship.col + 1
+                    })
+                }
+            } else if (instruction.type === InstructionType.ROTATE_LEFT) {
+                if (instruction.color)
+                    if (shipCell.color !== instruction.color)
+                        return
+
+                const direction = state.ship.direction === 0 ? Direction.LEFT : (state.ship.direction - 1)
+                Object.assign(state.ship, {
+                    ...state.ship,
+                    direction
+                })
+            } else if (instruction.type === InstructionType.ROTATE_RIGHT) {
+                if (instruction.color)
+                    if (shipCell.color !== instruction.color)
+                        return
+
+                const direction = (state.ship.direction + 1) % 4
+                Object.assign(state.ship, {
+                    ...state.ship,
+                    direction
+                })
+            }
+        },
+        initStack(state) {
+            state.stack = [
+                ...state.functions[0].instructions.filter(instruction => instruction.type !== InstructionType.PASS)
+            ]
+        },
+        collect(state, payload: number) {
+            const cell = state.grid.cells[payload]
+            Object.assign(cell, {
+                ...cell,
+                collected: true
             })
         }
     }

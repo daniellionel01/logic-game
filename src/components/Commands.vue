@@ -17,6 +17,11 @@
         <Action :instructionType="IT_COND_COLOR" :color="COLOR_GREEN" />
         <Action :instructionType="IT_COND_COLOR" :color="COLOR_BLUE" />
       </div>
+      <div class="action-row">
+        <Action :instructionType="IT_PAINT_COLOR" :payload="COLOR_RED" />
+        <Action :instructionType="IT_PAINT_COLOR" :payload="COLOR_GREEN" />
+        <Action :instructionType="IT_PAINT_COLOR" :payload="COLOR_BLUE" />
+      </div>
     </div>
     <div id="functions">
       <h2>Functions</h2>

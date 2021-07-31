@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, watch, computed } from 'vue'
 import { useStore } from '../store'
 import Grid from './Grid.vue'
 import ExecutionBar from './ExecutionBar.vue'
@@ -25,9 +25,28 @@ export default defineComponent({
   setup: () => {
     const store = useStore()
 
+    watch(
+      () => store.state.playing,
+      (value, prevValue) => {
+        console.log(value, prevValue)
+      }
+    )
+
+    watch(
+      () => store.state.functions,
+      (value) => {
+        if (store.state.step > 0) return;
+        store.commit("initStack")
+      },
+      {
+        immediate: true,
+        deep: true
+      }
+    )
+
     return {
-      won: store.getters.won,
-      lost: store.getters.lost
+      won: computed(() => store.getters.won),
+      lost: computed(() => store.getters.lost)
     }
   }
 })

@@ -9,6 +9,9 @@
     <div v-else-if="instructionType === IT_ROT_RIGHT">
       <i class="fas fa-redo"></i>
     </div>
+    <div v-else-if="instructionType === IT_PAINT_COLOR">
+      <i class="fas fa-fill" :style="paintStyle"></i>
+    </div>
 
     <div v-else-if="instructionType === IT_CALL_FUNC">
       <span>f{{payload}}</span>
@@ -43,8 +46,15 @@ export default defineComponent({
       alignItems: 'center'
     }))
 
+    const paintStyle = computed(() => ({
+      color: props.color
+        ? (props.color === props.payload ? "white" : store.getters.getCSSColor(props.payload))
+        : store.getters.getCSSColor(props.payload)
+    }))
+
     return {
       symbolStyle,
+      paintStyle,
 
       IT_FORWARD: InstructionType.FORWARD,
       IT_ROT_RIGHT: InstructionType.ROTATE_RIGHT,

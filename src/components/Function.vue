@@ -56,7 +56,6 @@ export default defineComponent({
   width: 30px;
   height: 30px;
   border: 2px solid #CCC;
-  border-radius: 8px;
 
   display: flex;
   justify-content: center;
