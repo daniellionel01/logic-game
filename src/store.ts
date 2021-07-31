@@ -141,7 +141,9 @@ export const store = createStore<State>({
             { instructions: [
                 { type: InstructionType.ROTATE_LEFT, color: Color.RED, payload: undefined },
                 { type: InstructionType.CALL_FUNCTION, color: Color.NONE, payload: 0 }
-            ]}
+            ]},
+            { instructions: []},
+            { instructions: []}
         ],
         stack: [],
         selectedInstruction: {

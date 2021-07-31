@@ -10,10 +10,10 @@
         <Action :instructionType="IT_FORWARD" />
         <Action :instructionType="IT_ROT_RIGHT" />
       </div>
-      <div class="action-row">
-        <Action :instructionType="IT_CALL_FUNC" :payload="0" />
-        <Action :instructionType="IT_CALL_FUNC" :payload="1" />
-        <Action :instructionType="IT_CALL_FUNC" :payload="2" />
+      <div class="action-row" v-for="(_, index) in functionRows" :key="index">
+        <Action :instructionType="IT_CALL_FUNC" :payload="index*3" />
+        <Action :instructionType="IT_CALL_FUNC" :payload="index*3+1" />
+        <Action :instructionType="IT_CALL_FUNC" :payload="index*3+2" />
       </div>
       <div class="action-row">
         <Action :instructionType="IT_PAINT_COLOR" :payload="COLOR_RED" />
@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, computed } from 'vue'
 import { useStore, InstructionType, Color } from '../store'
 import Function from './Function.vue'
 import Action from './Action.vue'
@@ -48,8 +48,12 @@ export default defineComponent({
   setup: () => {
     const store = useStore()
 
+    const functionRows = computed(() => Math.ceil(store.state.functions.length / 3))
+
     return {
       functions: store.state.functions,
+      functionRows,
+
       IT_PASS: InstructionType.PASS,
       IT_FORWARD: InstructionType.FORWARD,
       IT_ROT_RIGHT: InstructionType.ROTATE_RIGHT,
