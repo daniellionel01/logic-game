@@ -3,6 +3,9 @@
     <div id="actions">
       <h2>Actions</h2>
       <div class="action-row">
+        <Action :instructionType="IT_PASS" />
+      </div>
+      <div class="action-row">
         <Action :instructionType="IT_ROT_LEFT" />
         <Action :instructionType="IT_FORWARD" />
         <Action :instructionType="IT_ROT_RIGHT" />
@@ -13,14 +16,14 @@
         <Action :instructionType="IT_CALL_FUNC" :payload="2" />
       </div>
       <div class="action-row">
-        <Action :instructionType="IT_COND_COLOR" :color="COLOR_RED" />
-        <Action :instructionType="IT_COND_COLOR" :color="COLOR_GREEN" />
-        <Action :instructionType="IT_COND_COLOR" :color="COLOR_BLUE" />
-      </div>
-      <div class="action-row">
         <Action :instructionType="IT_PAINT_COLOR" :payload="COLOR_RED" />
         <Action :instructionType="IT_PAINT_COLOR" :payload="COLOR_GREEN" />
         <Action :instructionType="IT_PAINT_COLOR" :payload="COLOR_BLUE" />
+      </div>
+      <div class="action-row">
+        <Action :instructionType="IT_COND_COLOR" :color="COLOR_RED" />
+        <Action :instructionType="IT_COND_COLOR" :color="COLOR_GREEN" />
+        <Action :instructionType="IT_COND_COLOR" :color="COLOR_BLUE" />
       </div>
     </div>
     <div id="functions">
@@ -47,6 +50,7 @@ export default defineComponent({
 
     return {
       functions: store.state.functions,
+      IT_PASS: InstructionType.PASS,
       IT_FORWARD: InstructionType.FORWARD,
       IT_ROT_RIGHT: InstructionType.ROTATE_RIGHT,
       IT_ROT_LEFT: InstructionType.ROTATE_LEFT,

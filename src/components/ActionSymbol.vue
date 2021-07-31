@@ -56,6 +56,7 @@ export default defineComponent({
       symbolStyle,
       paintStyle,
 
+      IT_CLEAR: InstructionType.PASS,
       IT_FORWARD: InstructionType.FORWARD,
       IT_ROT_RIGHT: InstructionType.ROTATE_RIGHT,
       IT_ROT_LEFT: InstructionType.ROTATE_LEFT,

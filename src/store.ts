@@ -235,16 +235,19 @@ export const store = createStore<State>({
             const shipCell = state.grid.cells[state.ship.col + state.ship.row * state.grid.cols]
 
             if (instruction.type === InstructionType.CALL_FUNCTION) {
+                if (instruction.color)
+                    if (shipCell.color !== instruction.color)
+                        return
+
                 if (instruction.payload === undefined) return
                 const func = state.functions[instruction.payload]
                 const instructions = func.instructions
                     .filter(instruction => instruction.type !== InstructionType.PASS)
                 state.stack.unshift(...instructions)
             } else if (instruction.type === InstructionType.FORWARD) {
-                if (instruction.color) {
+                if (instruction.color)
                     if (shipCell.color !== instruction.color)
                         return
-                }
 
                 if (state.ship.direction === Direction.TOP) {
                     Object.assign(state.ship, {
@@ -286,6 +289,15 @@ export const store = createStore<State>({
                 Object.assign(state.ship, {
                     ...state.ship,
                     direction
+                })
+            } else if (instruction.type === InstructionType.PAINT_COLOR) {
+                if (instruction.color)
+                    if (shipCell.color !== instruction.color)
+                        return
+                
+                Object.assign(shipCell, {
+                    ...shipCell,
+                    color: instruction.payload
                 })
             }
         },
