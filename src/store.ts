@@ -39,7 +39,7 @@ export enum InstructionType {
     ROTATE_LEFT,
 
     CALL_FUNCTION,
-    
+    COND_COLOR,
     PAINT_COLOR
 }
 
@@ -53,11 +53,17 @@ export interface Function {
     instructions: Instruction[]
 }
 
+export interface SelectedInstruction {
+    functionIndex: number
+    instructionIndex: number
+}
+
 export interface State {
     ship: Ship,
     grid: Grid,
     functions: Function[],
-    stack: Instruction[]
+    stack: Instruction[],
+    selectedInstruction: SelectedInstruction
 }
 export const key: InjectionKey<Store<State>> = Symbol()
 
@@ -125,17 +131,21 @@ export const store = createStore<State>({
         },
         functions: [
             { instructions: [
-                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
-                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
-                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
-                { type: InstructionType.PASS, color: Color.NONE, payload: undefined }
+                { type: InstructionType.FORWARD, color: Color.NONE, payload: undefined },
+                { type: InstructionType.FORWARD, color: Color.NONE, payload: undefined },
+                { type: InstructionType.ROTATE_LEFT, color: Color.NONE, payload: undefined },
+                { type: InstructionType.CALL_FUNCTION, color: Color.NONE, payload: 1 }
             ]},
             { instructions: [
-                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
-                { type: InstructionType.PASS, color: Color.NONE, payload: undefined }
+                { type: InstructionType.ROTATE_LEFT, color: Color.RED, payload: undefined },
+                { type: InstructionType.CALL_FUNCTION, color: Color.NONE, payload: 0 }
             ]}
         ],
-        stack: []
+        stack: [],
+        selectedInstruction: {
+            functionIndex: 0,
+            instructionIndex: 0
+        }
     },
     getters: {
         getCellByRowCol: (state) => (row: number, col: number): Cell | null => {
@@ -170,8 +180,42 @@ export const store = createStore<State>({
             else if (color === Color.GREEN) return "#10DB10"
             else if (color === Color.BLUE) return "#4747FF"
             return ""
+        },
+
+        selectedInstruction(state) {
+            return state.functions[state.selectedInstruction.functionIndex]
+                .instructions[state.selectedInstruction.instructionIndex]
         }
     },
+    mutations: {
+        selectInstruction(state, payload: SelectedInstruction) {
+            Object.assign(state.selectedInstruction, {
+                functionIndex: payload.functionIndex,
+                instructionIndex: payload.instructionIndex
+            })
+        },
+        setSelectedInstruction(state, payload: { type: InstructionType, payload: number | undefined, color: Color | undefined }) {
+            const selectedInstruction =
+                state.functions[state.selectedInstruction.functionIndex]
+                    .instructions[state.selectedInstruction.instructionIndex]
+
+            Object.assign(selectedInstruction, {
+                ...selectedInstruction,
+                type: payload.type,
+                ...(payload.payload !== undefined ? { payload: payload.payload } : {})
+            })
+        },
+        setSelectedInstructionColor(state, payload: Color) {
+            const selectedInstruction =
+                state.functions[state.selectedInstruction.functionIndex]
+                    .instructions[state.selectedInstruction.instructionIndex]
+                    
+            Object.assign(selectedInstruction, {
+                ...selectedInstruction,
+                color: payload
+            })
+        }
+    }
 })
 
 export function useStore() {

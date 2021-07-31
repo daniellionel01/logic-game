@@ -38,5 +38,7 @@ export default defineComponent({
   display: flex;
   border: 2px solid black;
   flex-direction: column;
+
+  padding: 3em;
 }
 </style>

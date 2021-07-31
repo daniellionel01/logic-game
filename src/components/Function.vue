@@ -1,8 +1,11 @@
 <template>
   <div id="function">
     <div class="block">f{{index}}</div>
-    <div v-for="(instruction, idx) in data.instructions" :key="idx" class="block">
-
+    <div v-for="(instruction, idx) in data.instructions" :key="idx" class="block"
+      :class="{ 'selected': index === selectedInstruction.functionIndex && idx === selectedInstruction.instructionIndex }"
+      @click="() => selectInstruction(idx)"
+    >
+      <ActionSymbol :instructionType="instruction.type" :payload="instruction.payload" :color="instruction.color" />
     </div>
   </div>
 </template>
@@ -10,9 +13,13 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { useStore, Function } from '../store'
+import ActionSymbol from './ActionSymbol.vue'
 
 export default defineComponent({
   name: 'Function',
+  components: {
+    ActionSymbol
+  },
   props: {
     index: {
       type: Number,
@@ -26,7 +33,16 @@ export default defineComponent({
   setup: (props) => {
     const store = useStore()
 
+    const selectInstruction = (instructionIndex: number) => {
+      store.commit("selectInstruction", {
+        functionIndex: props.index,
+        instructionIndex
+      })
+    }
+
     return {
+      selectedInstruction: store.state.selectedInstruction,
+      selectInstruction
     }
   }
 })
@@ -50,5 +66,10 @@ export default defineComponent({
 
   font-size: 0.8em;
   font-weight: 700;
+
+  cursor: pointer;
+}
+.selected {
+  background: lightgray;
 }
 </style>
