@@ -17,42 +17,100 @@ export interface Grid {
     cols: number
     cells: Cell[]
 }
+
+export enum Direction {
+    TOP,
+    RIGHT,
+    BOTTOM,
+    LEFT
+}
+
 export interface Ship {
     row: number
     col: number
+    direction: Direction
+}
+
+export enum InstructionType {
+    PASS,
+    FORWARD,
+
+    ROTATE_RIGHT,
+    ROTATE_LEFT,
+
+    CALL_FUNCTION,
+    
+    PAINT_COLOR
+}
+
+export interface Instruction {
+    type: InstructionType,
+    color: Color
+    payload?: number
+}
+
+export interface Function {
+    instructions: Instruction[]
 }
 
 export interface State {
     ship: Ship,
-    grid: Grid
+    grid: Grid,
+    functions: Function[],
+    stack: Instruction[]
 }
 export const key: InjectionKey<Store<State>> = Symbol()
 
 export const store = createStore<State>({
     state: {
         ship: {
-            row: 0,
-            col: 1
+            row: 3,
+            col: 3,
+            direction: Direction.TOP
         },
         grid: {
-            rows: 5,
-            cols: 5,
+            rows: 7,
+            cols: 7,
             cells: [
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: true, collected: false, color: Color.RED },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.RED },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: true, collected: false, color: Color.RED },
                 { star: false, collected: false, color: Color.RED },
                 { star: false, collected: false, color: Color.GREEN },
-                { star: false, collected: false, color: Color.BLUE },
+                { star: false, collected: false, color: Color.RED },
                 { star: true, collected: false, color: Color.RED },
-                { star: true, collected: false, color: Color.GREEN },
-                { star: true, collected: false, color: Color.BLUE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.NONE },
+                { star: false, collected: false, color: Color.RED },
                 { star: false, collected: false, color: Color.NONE },
                 { star: false, collected: false, color: Color.NONE },
                 { star: false, collected: false, color: Color.NONE },
                 { star: false, collected: false, color: Color.NONE },
                 { star: false, collected: false, color: Color.NONE },
                 { star: false, collected: false, color: Color.NONE },
-                { star: false, collected: false, color: Color.NONE },
-                { star: false, collected: false, color: Color.NONE },
-                { star: false, collected: false, color: Color.NONE },
+                { star: true, collected: false, color: Color.RED },
                 { star: false, collected: false, color: Color.NONE },
                 { star: false, collected: false, color: Color.NONE },
                 { star: false, collected: false, color: Color.NONE },
@@ -64,7 +122,20 @@ export const store = createStore<State>({
                 { star: false, collected: false, color: Color.NONE },
                 { star: false, collected: false, color: Color.NONE }
             ]
-        }
+        },
+        functions: [
+            { instructions: [
+                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
+                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
+                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
+                { type: InstructionType.PASS, color: Color.NONE, payload: undefined }
+            ]},
+            { instructions: [
+                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
+                { type: InstructionType.PASS, color: Color.NONE, payload: undefined }
+            ]}
+        ],
+        stack: []
     },
     getters: {
         getCellByRowCol: (state) => (row: number, col: number): Cell | null => {
@@ -89,6 +160,16 @@ export const store = createStore<State>({
         lost(_state, getters) {
             if (!getters.shipCell) return false;
             return getters.shipCell.color === Color.NONE
+        },
+        won(state) {
+            return state.grid.cells.filter(cell => cell.star && !cell.collected).length === 0
+        },
+
+        getCSSColor: (_state) => (color: Color): string => {
+            if (color === Color.RED) return "red"
+            else if (color === Color.GREEN) return "#10DB10"
+            else if (color === Color.BLUE) return "#4747FF"
+            return ""
         }
     },
 })

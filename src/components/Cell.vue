@@ -11,9 +11,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, computed } from 'vue'
-import { useStore, Cell , Color } from '../store'
-
-const colormap = ["red", "#10DB10", "#4747FF"]
+import { useStore, Cell , Color, Direction } from '../store'
 
 export default defineComponent({
   name: 'Cell',
@@ -30,7 +28,7 @@ export default defineComponent({
   setup: (props) => {
     const store = useStore()
 
-    const background = computed(() => colormap[props.data.color-1])
+    const background = computed(() => store.getters.getCSSColor(props.data.color))
 
     const row = store.getters.getRowByIndex(props.index)
     const col = store.getters.getColByIndex(props.index)
@@ -44,7 +42,11 @@ export default defineComponent({
     }
 
     const shipStyle = {
-      "color": props.data.color === Color.NONE ? "black" : "white"
+      "color": props.data.color === Color.NONE ? "black" : "white",
+      ...(store.state.ship.direction === Direction.TOP ? { "transform": "rotate(-90deg)" } : {}),
+      ...(store.state.ship.direction === Direction.RIGHT ? { "transform": "rotate(0deg)" } : {}),
+      ...(store.state.ship.direction === Direction.BOTTOM ? { "transform": "rotate(90deg)" } : {}),
+      ...(store.state.ship.direction === Direction.LEFT ? { "transform": "rotate(180deg)" } : {})
     }
 
     return {
