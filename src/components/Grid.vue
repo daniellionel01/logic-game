@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, computed } from 'vue'
 import Cell from './Cell.vue'
 import { useStore } from '../store'
 
@@ -19,14 +19,16 @@ export default defineComponent({
   setup: () => {
     const store = useStore()
 
-    const cellStyle = {
+    const cellStyle = computed(() => ({
       'display': 'grid',
       'gridTemplateColumns': Array.from(Array(store.state.grid.cols).keys()).map(_ => "1fr").join(" "),
       'gap': '5px'
-    }
+    }))
+
+    const cells = computed(() => store.state.cells)
 
     return {
-      cells: store.state.grid.cells,
+      cells,
       cellStyle
     }
   }

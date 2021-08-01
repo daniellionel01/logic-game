@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, computed } from 'vue'
+import { defineComponent, watch, computed, onMounted } from 'vue'
 import { useStore } from '../store'
 import Grid from './Grid.vue'
 import ExecutionBar from './ExecutionBar.vue'
@@ -31,8 +31,9 @@ export default defineComponent({
       (value, prevValue) => {
         if (prevValue && !value) { // playing => stop
           clearInterval(interval)
+          store.commit("initStack")
         } else { // start playing
-          interval = setInterval(() => store.commit("step"), 500)
+          interval = setInterval(() => store.commit("step"), 250)
         }
       }
     )
@@ -48,6 +49,10 @@ export default defineComponent({
         deep: true
       }
     )
+
+    onMounted(() => {
+      store.commit("resetLevel")
+    })
 
     return {
       won: computed(() => store.getters.won),

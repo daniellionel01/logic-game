@@ -30,11 +30,20 @@ export default defineComponent({
     const stack = computed(() => store.state.stack)
     const playing = computed(() => store.state.playing)
 
-    return {
-      play: () => store.commit("play"),
-      stop: () => store.commit("stop"),
-      step: () => store.commit("step"),
+    const play = () => {
+      store.commit("play")
+      store.commit("resetLevel")
+    }
+    const stop = () => {
+      store.commit("stop")
+      store.commit("resetLevel")
+    }
+    const step = () => store.commit("step")
 
+    return {
+      play,
+      stop,
+      step,
       stack,
       playing
     }
