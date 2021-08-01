@@ -2,6 +2,8 @@
 
 Based on the second logic game that you have to play if you register for the coding camp at [42heilbronn](https://www.42heilbronn.de). My time ran out on a level so I decided to program this game myself and keep working on the level.
 
+The files, and parts of this readme file, are based on the [vite vue-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-vue-ts) template.
+
 ## Recommended IDE Setup
 
 [VSCode](https://code.visualstudio.com/) + [Vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur). Make sure to enable `vetur.experimental.templateInterpolationService` in settings!
