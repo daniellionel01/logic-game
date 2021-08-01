@@ -25,10 +25,15 @@ export default defineComponent({
   setup: () => {
     const store = useStore()
 
+    let interval: number | undefined;
     watch(
       () => store.state.playing,
       (value, prevValue) => {
-        console.log(value, prevValue)
+        if (prevValue && !value) { // playing => stop
+          clearInterval(interval)
+        } else { // start playing
+          interval = setInterval(() => store.commit("step"), 500)
+        }
       }
     )
 
