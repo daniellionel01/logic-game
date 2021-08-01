@@ -1,6 +1,6 @@
-# Vue 3 + Typescript + Vite
+# Logic Game
 
-This template should help get you started developing with Vue 3 and Typescript in Vite.
+Based on the second logic game that you have to play if you register for the coding camp at [42heilbronn](https://www.42heilbronn.de). My time ran out on a level so I decided to program this game myself and keep working on the level.
 
 ## Recommended IDE Setup
 
