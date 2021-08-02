@@ -1,10 +1,12 @@
 {
   "name": "logic-game",
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "deploy": "node scripts/gh-pages-deploy.js"
   },
   "dependencies": {
     "vue": "^3.0.5",
