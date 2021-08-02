@@ -18,5 +18,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '15.x'
-      - run: npm ci
-      - run: npm run build
+      - name: install dependencies
+        run: npm ci
+      - name: build /dist folder
+        run: npm run build
