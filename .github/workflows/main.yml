@@ -22,6 +22,10 @@ jobs:
         run: npm ci
       - name: build /dist folder
         run: npm run build
+      - name: setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
       - name: add builded /dist folder
         run: git add dist
       - name: commit /dist folder
