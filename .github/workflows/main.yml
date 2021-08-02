@@ -14,9 +14,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Vue to Github Pages
-        uses: xRealNeon/VuePagesAction@1.0.0
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
         with:
-          username: kurzai
-          reponame: logic-game
-          token: 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
+          node-version: '15.x'
+      - name: deploy vue pages
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git config pull.rebase true
+          npm ci
+          npm run build
+          git init
+          git add -A
+          git commit -m 'deploy'
+          git push -f https://kurzai:${{ secrets.GITHUB_TOKEN }}@github.com/kurzai/logic-game.git main:gh-pages
