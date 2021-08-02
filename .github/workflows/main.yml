@@ -22,3 +22,9 @@ jobs:
         run: npm ci
       - name: build /dist folder
         run: npm run build
+      - name: add builded /dist folder
+        run: git add dist
+      - name: commit /dist folder
+        run: git commit -m 'adding dist subtree'
+      - name: add /dist folder to subtree
+        run: git subtree push --prefix dist origin gh-pages
