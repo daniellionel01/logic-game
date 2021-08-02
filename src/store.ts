@@ -150,14 +150,14 @@ export const store = createStore<State>({
         cells: [],
         functions: [
             { instructions: [
-                { type: InstructionType.FORWARD, color: Color.NONE, payload: undefined },
-                { type: InstructionType.FORWARD, color: Color.NONE, payload: undefined },
-                { type: InstructionType.ROTATE_LEFT, color: Color.NONE, payload: undefined },
-                { type: InstructionType.CALL_FUNCTION, color: Color.NONE, payload: 1 }
+                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
+                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
+                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
+                { type: InstructionType.PASS, color: Color.NONE, payload: undefined }
             ]},
             { instructions: [
-                { type: InstructionType.ROTATE_LEFT, color: Color.RED, payload: undefined },
-                { type: InstructionType.CALL_FUNCTION, color: Color.NONE, payload: 0 }
+                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
+                { type: InstructionType.PASS, color: Color.NONE, payload: undefined }
             ]}
         ],
         stack: [],
