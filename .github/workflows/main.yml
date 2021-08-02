@@ -26,6 +26,7 @@ jobs:
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
+          git config pull.rebase true
       - name: pull gh-pages branch
         run: git pull origin gh-pages
       - name: add builded /dist folder
