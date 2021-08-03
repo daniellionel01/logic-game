@@ -1,7 +1,6 @@
 <template>
   <div id="game">
-    <div>won: {{won}}</div>
-    <div>lost: {{lost}}</div>
+    <InfoBar />
     <Grid />
     <ExecutionBar />
     <Commands />
@@ -11,6 +10,7 @@
 <script lang="ts">
 import { defineComponent, watch, computed, onMounted } from 'vue'
 import { useStore } from '../store'
+import InfoBar from './InfoBar.vue'
 import Grid from './Grid.vue'
 import ExecutionBar from './ExecutionBar.vue'
 import Commands from './Commands.vue'
@@ -18,6 +18,7 @@ import Commands from './Commands.vue'
 export default defineComponent({
   name: 'Game',
   components: {
+    InfoBar,
     Grid,
     ExecutionBar,
     Commands
@@ -40,7 +41,7 @@ export default defineComponent({
 
     watch(
       () => store.state.functions,
-      (value) => {
+      (_value) => {
         if (store.state.step > 0) return;
         store.commit("initStack")
       },
@@ -53,11 +54,6 @@ export default defineComponent({
     onMounted(() => {
       store.commit("resetLevel")
     })
-
-    return {
-      won: computed(() => store.getters.won),
-      lost: computed(() => store.getters.lost)
-    }
   }
 })
 </script>
