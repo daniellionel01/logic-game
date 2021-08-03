@@ -24,7 +24,7 @@ export default defineComponent({
   setup: () => {
     const store = useStore()
 
-    const help = ref(true)
+    const help = ref(false)
     const onHelp = () => help.value = true
     const closeHelp = () => help.value = false
 
