@@ -4,6 +4,8 @@ Based on the second logic game that you have to play if you register for the cod
 
 The files, and parts of this readme file, are based on the [vite vue-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-vue-ts) template.
 
+This repo is hosted on GitHub Pages at [https://kurzai.github.io/logic-game/](https://kurzai.github.io/logic-game/)
+
 ## Recommended IDE Setup
 
 [VSCode](https://code.visualstudio.com/) + [Vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur). Make sure to enable `vetur.experimental.templateInterpolationService` in settings!
