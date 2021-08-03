@@ -32,7 +32,6 @@ export default defineComponent({
 
     const play = () => {
       store.commit("play")
-      store.commit("resetLevel")
     }
     const stop = () => {
       store.commit("stop")

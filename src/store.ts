@@ -247,7 +247,6 @@ export const store = createStore<State>({
             Object.assign(state.ship, { ...level.ship })
         },
         play(state) {
-            state.step = 0
             state.playing = true
         },
         stop(state) {
