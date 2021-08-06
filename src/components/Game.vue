@@ -26,6 +26,11 @@ export default defineComponent({
   setup: () => {
     const store = useStore()
 
+    onMounted(() => {
+      store.commit("loadLevel")
+      store.commit("resetLevel")
+    })
+
     let interval: number | undefined;
     watch(
       () => store.state.playing,
@@ -50,10 +55,6 @@ export default defineComponent({
         deep: true
       }
     )
-
-    onMounted(() => {
-      store.commit("resetLevel")
-    })
   }
 })
 </script>
