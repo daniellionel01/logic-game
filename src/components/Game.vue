@@ -45,6 +45,15 @@ export default defineComponent({
     )
 
     watch(
+      () => store.state.step,
+      (value, prevValue) => {
+        if (prevValue > 0 && value === 0) { // stopping
+          store.commit("initStack")
+        }
+      }
+    )
+
+    watch(
       () => store.state.functions,
       (_value) => {
         if (store.state.step > 0) return;
