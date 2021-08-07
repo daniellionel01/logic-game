@@ -7,10 +7,10 @@
           <ActionSymbol :instructionType="instruction.type" :payload="instruction.payload" :color="instruction.color" />
         </div>
       </div>
-      <button @click="play" :disabled="currentStep > 0 || lost">
+      <button @click="play" :disabled="stack.length === 0 || currentStep > 0 || lost">
         <i class="fas fa-play"></i>
       </button>
-      <button @click="step" :disabled="playing || lost || won">
+      <button @click="step" :disabled="stack.length === 0 || playing || lost || won">
         <i class="fas fa-step-forward"></i>
       </button>
       <button @click="stop" :disabled="currentStep === 0">
