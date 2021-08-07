@@ -7,8 +7,8 @@
           <ActionSymbol :instructionType="instruction.type" :payload="instruction.payload" :color="instruction.color" />
         </div>
       </div>
-      <button @click="play" :disabled="currentStep > 0">play</button>
-      <button @click="step" :disabled="playing">step</button>
+      <button @click="play" :disabled="currentStep > 0 || lost">play</button>
+      <button @click="step" :disabled="playing || lost">step</button>
       <button @click="stop" :disabled="currentStep === 0">pause</button>
     </div>
   </div>
@@ -30,6 +30,7 @@ export default defineComponent({
     const stack = computed(() => store.state.stack)
     const playing = computed(() => store.state.playing)
     const currentStep = computed(() => store.state.step)
+    const lost = computed(() => store.getters.lost)
 
     const play = () => {
       store.commit("play")
@@ -46,7 +47,8 @@ export default defineComponent({
       step,
       currentStep,
       stack,
-      playing
+      playing,
+      lost
     }
   }
 })
