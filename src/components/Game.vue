@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, computed, onMounted } from 'vue'
+import { defineComponent, watch, onMounted } from 'vue'
 import { useStore } from '../store'
 import InfoBar from './InfoBar.vue'
 import Grid from './Grid.vue'
