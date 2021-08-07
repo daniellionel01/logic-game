@@ -51,7 +51,7 @@ export default defineComponent({
     const functionRows = computed(() => Math.ceil(store.state.functions.length / 3))
 
     return {
-      functions: store.state.functions,
+      functions: computed(() => store.state.functions),
       functionRows,
 
       IT_PASS: InstructionType.PASS,

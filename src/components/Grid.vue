@@ -1,7 +1,11 @@
 <template>
   <div id="grid">
-    <div id="grid-container" :style="cellStyle">
-        <Cell v-for="(cell, index) in cells" :key="index" :data="cell" :index="index" class="cell" />
+    <div id="grid-container" :style="containerStyle">
+      <template v-for="row in rows" :key="row">
+        <template v-for="col in cols" :key="col">
+          <Cell :row="row" :col="col" class="cell" />
+        </template>
+      </template>
     </div>
   </div>
 </template>
@@ -19,17 +23,26 @@ export default defineComponent({
   setup: () => {
     const store = useStore()
 
-    const cellStyle = computed(() => ({
+    // we add +2 to width and height to have a border of empty cells around the grid
+    const width = computed(() => store.getters.width + 2)
+    const height = computed(() => store.getters.width + 2)
+
+    const rows = computed(() => Array.from(Array(height.value).keys()).map((_row, index) => index))
+    const cols = computed(() => Array.from(Array(width.value).keys()).map((_col, index) => index))
+
+    const containerStyle = computed(() => ({
       'display': 'grid',
-      'gridTemplateColumns': Array.from(Array(store.state.grid.cols).keys()).map(_ => "1fr").join(" "),
+      'gridTemplateColumns': Array.from(Array(width.value).keys()).map(_ => "1fr").join(" "),
       'gap': '5px'
     }))
 
-    const cells = computed(() => store.state.cells)
+    const cells = computed(() => store.state.grid.cells)
 
     return {
+      rows,
+      cols,
       cells,
-      cellStyle
+      containerStyle
     }
   }
 })

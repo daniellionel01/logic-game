@@ -26,6 +26,11 @@ export default defineComponent({
   setup: () => {
     const store = useStore()
 
+    onMounted(() => {
+      store.commit("loadLevel")
+      store.commit("resetLevel")
+    })
+
     let interval: number | undefined;
     watch(
       () => store.state.playing,
@@ -35,6 +40,15 @@ export default defineComponent({
           store.commit("initStack")
         } else { // start playing
           interval = setInterval(() => store.commit("step"), 250)
+        }
+      }
+    )
+
+    watch(
+      () => store.state.step,
+      (value, prevValue) => {
+        if (prevValue > 0 && value === 0) { // stopping
+          store.commit("initStack")
         }
       }
     )
@@ -50,10 +64,6 @@ export default defineComponent({
         deep: true
       }
     )
-
-    onMounted(() => {
-      store.commit("resetLevel")
-    })
   }
 })
 </script>

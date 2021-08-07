@@ -7,15 +7,6 @@ export enum Color {
     GREEN,
     BLUE
 }
-export interface Cell {
-    star: boolean
-    color: Color
-    collected: boolean
-}
-export interface Grid {
-    rows: number
-    cols: number
-}
 
 export enum Direction {
     TOP,
@@ -24,9 +15,16 @@ export enum Direction {
     LEFT
 }
 
-export interface Ship {
-    row: number
+export interface GridCoordinate {
+    row: number,
     col: number
+}
+
+export interface Cell extends GridCoordinate {
+    color: Color
+}
+
+export interface Ship extends GridCoordinate {
     direction: Direction
 }
 
@@ -57,19 +55,35 @@ export interface SelectedInstruction {
     instructionIndex: number
 }
 
+export interface CellConfig extends GridCoordinate {
+    color: Color,
+}
+
+export interface Star extends GridCoordinate {
+    collected: boolean
+}
+
 export interface Level {
-    grid: Grid
     ship: Ship
-    cells: Cell[]
+    cells: CellConfig[],
+    stars: GridCoordinate[],
+    functions: number[],
+    paintAvailability: {
+        red: boolean,
+        green: boolean,
+        blue: boolean
+    }
 }
 
 export interface State {
     levels: Level[]
-    currentLevel: number
-    ship: Ship
-    grid: Grid
-    cells: Cell[]
-    functions: Function[]
+    currentLevelIndex: number,
+    grid: {
+        ship: Ship,
+        cells: Cell[],
+        stars: Star[]
+    },
+    functions: Function[],
     stack: Instruction[]
     selectedInstruction: SelectedInstruction
     step: number
@@ -82,84 +96,36 @@ export const store = createStore<State>({
         levels: [
             {
                 ship: {
-                    row: 3,
-                    col: 3,
-                    direction: Direction.TOP
+                    row: 3, col: 3, direction: Direction.TOP
                 },
-                grid: {
-                    rows: 7,
-                    cols: 7,
-                },
+                functions: [4, 2],
+                paintAvailability: { red: false, green: false, blue: false },
                 cells: [
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: true, collected: false, color: Color.RED },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.RED },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: true, collected: false, color: Color.RED },
-                    { star: false, collected: false, color: Color.RED },
-                    { star: false, collected: false, color: Color.GREEN },
-                    { star: false, collected: false, color: Color.RED },
-                    { star: true, collected: false, color: Color.RED },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.RED },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: true, collected: false, color: Color.RED },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE },
-                    { star: false, collected: false, color: Color.NONE }
+                    { row: 1, col: 3, color: Color.RED },
+                    { row: 2, col: 3, color: Color.RED },
+                    { row: 3, col: 1, color: Color.RED },
+                    { row: 3, col: 2, color: Color.RED },
+                    { row: 3, col: 3, color: Color.GREEN },
+                    { row: 3, col: 4, color: Color.RED },
+                    { row: 3, col: 5, color: Color.RED },
+                    { row: 4, col: 3, color: Color.RED },
+                    { row: 5, col: 3, color: Color.RED }
+                ],
+                stars: [
+                    { row: 1, col: 3 },
+                    { row: 3, col: 5 },
+                    { row: 3, col: 1 },
+                    { row: 5, col: 3 }
                 ]
             }
         ],
-        currentLevel: 0,
-
-        ship: { row: 0, col: 0, direction: 0 },
-        grid: { rows: 0, cols: 0 },
-        cells: [],
-        functions: [
-            { instructions: [
-                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
-                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
-                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
-                { type: InstructionType.PASS, color: Color.NONE, payload: undefined }
-            ]},
-            { instructions: [
-                { type: InstructionType.PASS, color: Color.NONE, payload: undefined },
-                { type: InstructionType.PASS, color: Color.NONE, payload: undefined }
-            ]}
-        ],
+        currentLevelIndex: 0,
+        grid: {
+            ship: { row: 0, col: 0, direction: Direction.TOP },
+            cells: [],
+            stars: []
+        },
+        functions: [],
         stack: [],
         selectedInstruction: {
             functionIndex: 0,
@@ -169,22 +135,29 @@ export const store = createStore<State>({
         playing: false
     },
     getters: {
-        getCellByRowCol: (state) => (row: number, col: number): Cell | null => {
-            const cell = state.cells[col + row * state.grid.cols]
-            return cell || null
+        width (state) {
+            const rows = state.grid.cells.map(cell => cell.row)
+            if (rows.length === 0) return 0
+
+            const minRow = Math.min(...rows)
+            const maxRow = Math.max(...rows)
+            return maxRow - minRow + 1
         },
-        getRowByIndex: (state) => (index: number): number => {
-            return Math.floor(index / state.grid.rows)
-        },
-        getColByIndex: (state) => (index: number): number => {
-            return index % state.grid.cols
+        height (state) {
+            const cols = state.grid.cells.map(cell => cell.col)
+            if (cols.length === 0) return 0
+
+            const minCol = Math.min(...cols)
+            const maxCol = Math.max(...cols)
+            return maxCol - minCol + 1
         },
 
-        shipCell(state, getters): Cell | undefined {
-            return state.cells.find((_cell, index) => {
-                const row = getters.getRowByIndex(index)
-                const col = getters.getColByIndex(index)
-                return state.ship.row === row && state.ship.col === col
+        getCellByRowCol: (state) => (row: number, col: number): Cell | undefined =>
+            state.grid.cells.find(cell => cell.row === row && cell.col === col),
+
+        shipCell(state): Cell | undefined {
+            return state.grid.cells.find((cell) => {
+                return state.grid.ship.row === cell.row && state.grid.ship.col === cell.col
             })
         },
 
@@ -193,7 +166,7 @@ export const store = createStore<State>({
             return getters.shipCell.color === Color.NONE
         },
         won(state) {
-            return state.cells.filter(cell => cell.star && !cell.collected).length === 0
+            return state.grid.stars.filter(star => !star.collected).length === 0
         },
 
         getCSSColor: (_state) => (color: Color): string => {
@@ -236,15 +209,22 @@ export const store = createStore<State>({
                 color: payload
             })
         },
+        loadLevel(state) {
+            const level = state.levels[state.currentLevelIndex]
+
+            state.functions = [...level.functions.map(num =>
+                ({ instructions: Array.from(Array(num).keys()).map(() =>
+                    ({  type: InstructionType.PASS, color: Color.NONE, payload: undefined  })) }))]
+        },
         resetLevel(state) {
-            const level = state.levels[state.currentLevel]
-            Object.assign(state.grid, {
-                ...state.grid,
-                rows: level.grid.rows,
-                cols: level.grid.cols
-            })
-            state.cells = [...level.cells.map(cell => ({...cell}))]
-            Object.assign(state.ship, { ...level.ship })
+            const level = state.levels[state.currentLevelIndex]
+
+            Object.assign(state.grid.stars,
+                [...level.stars.map(star => ({...star, collected: false}))]
+            )
+            Object.assign(state.grid.cells,
+                [...level.cells.map(cell => ({...cell}))])
+            Object.assign(state.grid.ship, { ...level.ship })
         },
         play(state) {
             state.playing = true
@@ -254,12 +234,12 @@ export const store = createStore<State>({
             state.step = 0
         },
         step(state) {
-            // TODO pop current stack
             const instruction = state.stack.shift()
             if (!instruction) return;
             state.step += 1
 
-            const shipCell = state.cells[state.ship.col + state.ship.row * state.grid.cols]
+            const shipCell = state.grid.cells.find(cell => cell.row === state.grid.ship.row && cell.col === state.grid.ship.col)
+            if (!shipCell) return;
 
             if (instruction.type === InstructionType.CALL_FUNCTION) {
                 if (instruction.color)
@@ -276,25 +256,25 @@ export const store = createStore<State>({
                     if (shipCell.color !== instruction.color)
                         return
 
-                if (state.ship.direction === Direction.TOP) {
-                    Object.assign(state.ship, {
-                        ...state.ship,
-                        row: state.ship.row - 1
+                if (state.grid.ship.direction === Direction.TOP) {
+                    Object.assign(state.grid.ship, {
+                        ...state.grid.ship,
+                        row: state.grid.ship.row - 1
                     })
-                } else if (state.ship.direction === Direction.BOTTOM) {
-                    Object.assign(state.ship, {
-                        ...state.ship,
-                        row: state.ship.row + 1
+                } else if (state.grid.ship.direction === Direction.BOTTOM) {
+                    Object.assign(state.grid.ship, {
+                        ...state.grid.ship,
+                        row: state.grid.ship.row + 1
                     })
-                } else if (state.ship.direction === Direction.LEFT) {
-                    Object.assign(state.ship, {
-                        ...state.ship,
-                        col: state.ship.col - 1
+                } else if (state.grid.ship.direction === Direction.LEFT) {
+                    Object.assign(state.grid.ship, {
+                        ...state.grid.ship,
+                        col: state.grid.ship.col - 1
                     })
-                } else if (state.ship.direction === Direction.RIGHT) {
-                    Object.assign(state.ship, {
-                        ...state.ship,
-                        col: state.ship.col + 1
+                } else if (state.grid.ship.direction === Direction.RIGHT) {
+                    Object.assign(state.grid.ship, {
+                        ...state.grid.ship,
+                        col: state.grid.ship.col + 1
                     })
                 }
             } else if (instruction.type === InstructionType.ROTATE_LEFT) {
@@ -302,9 +282,9 @@ export const store = createStore<State>({
                     if (shipCell.color !== instruction.color)
                         return
 
-                const direction = state.ship.direction === 0 ? Direction.LEFT : (state.ship.direction - 1)
-                Object.assign(state.ship, {
-                    ...state.ship,
+                const direction = state.grid.ship.direction === 0 ? Direction.LEFT : (state.grid.ship.direction - 1)
+                Object.assign(state.grid.ship, {
+                    ...state.grid.ship,
                     direction
                 })
             } else if (instruction.type === InstructionType.ROTATE_RIGHT) {
@@ -312,9 +292,9 @@ export const store = createStore<State>({
                     if (shipCell.color !== instruction.color)
                         return
 
-                const direction = (state.ship.direction + 1) % 4
-                Object.assign(state.ship, {
-                    ...state.ship,
+                const direction = (state.grid.ship.direction + 1) % 4
+                Object.assign(state.grid.ship, {
+                    ...state.grid.ship,
                     direction
                 })
             } else if (instruction.type === InstructionType.PAINT_COLOR) {
@@ -329,14 +309,17 @@ export const store = createStore<State>({
             }
         },
         initStack(state) {
+            if (state.functions.length === 0) return;
+
             state.stack = [
                 ...state.functions[0].instructions.filter(instruction => instruction.type !== InstructionType.PASS)
             ]
         },
-        collect(state, payload: number) {
-            const cell = state.cells[payload]
-            Object.assign(cell, {
-                ...cell,
+        collect(state, payload: GridCoordinate) {
+            const star = state.grid.stars
+                .find(cell => cell.row === payload.row && cell.col === payload.col)
+            Object.assign(star, {
+                ...star,
                 collected: true
             })
         }
