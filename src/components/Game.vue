@@ -5,15 +5,18 @@
     <ExecutionBar />
     <Commands />
   </div>
+
+  <WonDialog v-if="won" />
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, onMounted } from 'vue'
+import { defineComponent, watch, onMounted, computed } from 'vue'
 import { useStore } from '../store'
 import InfoBar from './InfoBar.vue'
 import Grid from './Grid.vue'
 import ExecutionBar from './ExecutionBar.vue'
 import Commands from './Commands.vue'
+import WonDialog from './WonDialog.vue'
 
 export default defineComponent({
   name: 'Game',
@@ -21,10 +24,13 @@ export default defineComponent({
     InfoBar,
     Grid,
     ExecutionBar,
-    Commands
+    Commands,
+    WonDialog
   },
   setup: () => {
     const store = useStore()
+
+    const won = computed(() => store.getters.won)
 
     onMounted(() => {
       store.commit("loadLevel")
@@ -72,6 +78,10 @@ export default defineComponent({
         deep: true
       }
     )
+
+    return {
+      won
+    }
   }
 })
 </script>
