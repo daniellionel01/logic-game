@@ -43,6 +43,14 @@ export default defineComponent({
         }
       }
     )
+    watch(
+      () => store.getters.won,
+      (value, prevValue) => {
+        if (!prevValue && value) { // won!
+          clearInterval(interval)
+        }
+      }
+    )
 
     watch(
       () => store.state.step,

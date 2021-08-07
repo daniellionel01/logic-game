@@ -8,7 +8,7 @@
         </div>
       </div>
       <button @click="play" :disabled="currentStep > 0 || lost">play</button>
-      <button @click="step" :disabled="playing || lost">step</button>
+      <button @click="step" :disabled="playing || lost || won">step</button>
       <button @click="stop" :disabled="currentStep === 0">pause</button>
     </div>
   </div>
@@ -31,6 +31,7 @@ export default defineComponent({
     const playing = computed(() => store.state.playing)
     const currentStep = computed(() => store.state.step)
     const lost = computed(() => store.getters.lost)
+    const won = computed(() => store.getters.won)
 
     const play = () => {
       store.commit("play")
@@ -48,7 +49,8 @@ export default defineComponent({
       currentStep,
       stack,
       playing,
-      lost
+      lost,
+      won
     }
   }
 })
