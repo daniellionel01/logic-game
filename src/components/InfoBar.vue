@@ -1,8 +1,6 @@
 <template>
   <div id="info-bar">
     <div id="stats">
-      <div>won: {{won}}</div>
-      <div>lost: {{lost}}</div>
     </div>
     <div id="buttons">
       <button @click="onHelp">help</button>
