@@ -162,8 +162,7 @@ export const store = createStore<State>({
         },
 
         lost(_state, getters) {
-            if (!getters.shipCell) return false;
-            return getters.shipCell.color === Color.NONE
+            return !getters.shipCell
         },
         won(state) {
             return state.grid.stars.filter(star => !star.collected).length === 0
