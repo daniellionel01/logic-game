@@ -25,7 +25,7 @@ export default defineComponent({
 
     // we add +2 to width and height to have a border of empty cells around the grid
     const width = computed(() => store.getters.width + 2)
-    const height = computed(() => store.getters.width + 2)
+    const height = computed(() => store.getters.height + 2)
 
     const rows = computed(() => Array.from(Array(height.value).keys()).map((_row, index) => index))
     const cols = computed(() => Array.from(Array(width.value).keys()).map((_col, index) => index))

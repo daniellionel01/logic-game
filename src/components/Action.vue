@@ -22,7 +22,11 @@ export default defineComponent({
       required: true
     },
     payload: Number,
-    color: Number
+    color: Number,
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   setup: (props) => {
     const store = useStore()
@@ -41,6 +45,8 @@ export default defineComponent({
     }
 
     const disabled = computed(() => {
+      if (props.disabled) return true
+
       if (!props.payload) return false
 
       return props.instructionType === InstructionType.CALL_FUNCTION &&

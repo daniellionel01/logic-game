@@ -57,6 +57,14 @@ export default defineComponent({
         }
       }
     )
+    watch(
+      () => store.getters.lost,
+      (value, prevValue) => {
+        if (!prevValue && value) { // lost!
+          clearInterval(interval)
+        }
+      }
+    )
 
     watch(
       () => store.state.step,
@@ -89,7 +97,7 @@ export default defineComponent({
 <style scoped>
 #game {
   display: flex;
-  border: 2px solid black;
+  /*border: 2px solid black;*/
   flex-direction: column;
 
   padding: 3em;

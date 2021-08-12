@@ -96,6 +96,38 @@ export const store = createStore<State>({
         levels: [
             {
                 ship: {
+                    row: 7, col: 13, direction: Direction.LEFT
+                },
+                functions: [6],
+                paintAvailability: { red: false, green: false, blue: false },
+                cells: [
+                    { row: 1, col: 1, color: Color.GREEN },
+                    { row: 2, col: 1, color: Color.GREEN },
+                    { row: 2, col: 2, color: Color.GREEN },
+                    { row: 3, col: 2, color: Color.GREEN },
+                    { row: 3, col: 3, color: Color.GREEN },
+                    { row: 4, col: 3, color: Color.GREEN },
+                    { row: 4, col: 4, color: Color.GREEN },
+                    { row: 5, col: 4, color: Color.GREEN },
+                    { row: 5, col: 5, color: Color.GREEN },
+                    { row: 6, col: 5, color: Color.GREEN },
+                    { row: 6, col: 6, color: Color.GREEN },
+                    { row: 7, col: 6, color: Color.RED },
+                    { row: 7, col: 7, color: Color.GREEN },
+                    { row: 7, col: 8, color: Color.GREEN },
+                    { row: 7, col: 9, color: Color.GREEN },
+                    { row: 7, col: 10, color: Color.GREEN },
+                    { row: 7, col: 11, color: Color.GREEN },
+                    { row: 7, col: 12, color: Color.GREEN },
+                    { row: 7, col: 13, color: Color.GREEN },
+                ],
+                stars: [
+                    { row: 1, col: 1 }
+                ]
+            },
+
+            {
+                ship: {
                     row: 3, col: 3, direction: Direction.TOP
                 },
                 functions: [4, 2],
@@ -117,7 +149,7 @@ export const store = createStore<State>({
                     { row: 3, col: 1 },
                     { row: 5, col: 3 }
                 ]
-            }
+            },
         ],
         currentLevelIndex: 0,
         grid: {
@@ -136,20 +168,20 @@ export const store = createStore<State>({
     },
     getters: {
         width (state) {
-            const rows = state.grid.cells.map(cell => cell.row)
-            if (rows.length === 0) return 0
-
-            const minRow = Math.min(...rows)
-            const maxRow = Math.max(...rows)
-            return maxRow - minRow + 1
-        },
-        height (state) {
             const cols = state.grid.cells.map(cell => cell.col)
             if (cols.length === 0) return 0
 
             const minCol = Math.min(...cols)
             const maxCol = Math.max(...cols)
             return maxCol - minCol + 1
+        },
+        height (state) {
+            const rows = state.grid.cells.map(cell => cell.row)
+            if (rows.length === 0) return 0
+
+            const minRow = Math.min(...rows)
+            const maxRow = Math.max(...rows)
+            return maxRow - minRow + 1
         },
 
         getCellByRowCol: (state) => (row: number, col: number): Cell | undefined =>
@@ -218,11 +250,10 @@ export const store = createStore<State>({
         resetLevel(state) {
             const level = state.levels[state.currentLevelIndex]
 
+            state.grid.cells = [...level.cells.map(cell => ({...cell}))]
             Object.assign(state.grid.stars,
                 [...level.stars.map(star => ({...star, collected: false}))]
             )
-            Object.assign(state.grid.cells,
-                [...level.cells.map(cell => ({...cell}))])
             Object.assign(state.grid.ship, { ...level.ship })
         },
         play(state) {
@@ -321,6 +352,11 @@ export const store = createStore<State>({
                 ...star,
                 collected: true
             })
+        },
+
+        gotoNextLevel(state) {
+            if (state.currentLevelIndex > state.levels.length - 1) return
+            state.currentLevelIndex += 1
         }
     }
 })
