@@ -6,7 +6,7 @@
             <p>You successfully collected all stars. Good job!</p>
             
             <div id="actions">
-                <button>next level</button>
+                <button @click="gotoNextLevel">next level</button>
             </div>
         </div>
     </div>
@@ -14,10 +14,23 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { useStore } from '../store'
 
 export default defineComponent({
     name: "WonDialog",
     setup() {
+        const store = useStore()
+
+        const gotoNextLevel = () => {
+            store.commit("gotoNextLevel")
+            store.commit("loadLevel")
+            store.commit("resetLevel")
+            store.commit("initStack")
+        }
+
+        return {
+            gotoNextLevel
+        }
     },
 })
 </script>
