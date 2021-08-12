@@ -28,7 +28,6 @@ export default defineComponent({
   font-family: Arial, Helvetica, sans-serif;
 }
 #game-container {
-  width: 800px;
 }
 h2 {
   font-size: 1em;
