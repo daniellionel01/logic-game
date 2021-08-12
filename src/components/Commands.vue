@@ -16,9 +16,9 @@
         <Action :instructionType="IT_CALL_FUNC" :payload="index*3+2" />
       </div>
       <div class="action-row">
-        <Action :instructionType="IT_PAINT_COLOR" :payload="COLOR_RED" />
-        <Action :instructionType="IT_PAINT_COLOR" :payload="COLOR_GREEN" />
-        <Action :instructionType="IT_PAINT_COLOR" :payload="COLOR_BLUE" />
+        <Action :instructionType="IT_PAINT_COLOR" :payload="COLOR_RED" :disabled="!level.paintAvailability.red" />
+        <Action :instructionType="IT_PAINT_COLOR" :payload="COLOR_GREEN" :disabled="!level.paintAvailability.green" />
+        <Action :instructionType="IT_PAINT_COLOR" :payload="COLOR_BLUE" :disabled="!level.paintAvailability.blue" />
       </div>
       <div class="action-row">
         <Action :instructionType="IT_COND_COLOR" :color="COLOR_RED" />
@@ -49,10 +49,12 @@ export default defineComponent({
     const store = useStore()
 
     const functionRows = computed(() => Math.ceil(store.state.functions.length / 3))
+    const level = computed(() => store.state.levels[store.state.currentLevelIndex])
 
     return {
       functions: computed(() => store.state.functions),
       functionRows,
+      level,
 
       IT_PASS: InstructionType.PASS,
       IT_FORWARD: InstructionType.FORWARD,
