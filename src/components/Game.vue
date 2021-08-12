@@ -57,6 +57,14 @@ export default defineComponent({
         }
       }
     )
+    watch(
+      () => store.getters.lost,
+      (value, prevValue) => {
+        if (!prevValue && value) { // lost!
+          clearInterval(interval)
+        }
+      }
+    )
 
     watch(
       () => store.state.step,
