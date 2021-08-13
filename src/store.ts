@@ -305,7 +305,7 @@ export const store = createStore<State>({
                 ]
             },
         ],
-        currentLevelIndex: 4,
+        currentLevelIndex: 0,
         grid: {
             ship: { row: 0, col: 0, direction: Direction.TOP },
             cells: [],
