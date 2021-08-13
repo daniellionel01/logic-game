@@ -96,6 +96,160 @@ export const store = createStore<State>({
         levels: [
             {
                 ship: {
+                    row: 1, col: 1, direction: Direction.RIGHT
+                },
+                functions: [2],
+                paintAvailability: { red: false, green: false, blue: false },
+                cells: [
+                    { row: 1, col: 1, color: Color.RED },
+                    { row: 1, col: 2, color: Color.GREEN },
+                    { row: 1, col: 3, color: Color.BLUE },
+                    { row: 1, col: 4, color: Color.RED },
+                    { row: 1, col: 5, color: Color.GREEN },
+                    { row: 1, col: 6, color: Color.BLUE },
+                    { row: 1, col: 7, color: Color.RED },
+                ],
+                stars: [
+                    { row: 1, col: 7 },
+                ]
+            },
+
+            {
+                ship: {
+                    row: 9, col: 1, direction: Direction.RIGHT
+                },
+                functions: [5],
+                paintAvailability: { red: false, green: false, blue: false },
+                cells: [
+                    { row: 9, col: 1, color: Color.RED },
+                    { row: 9, col: 2, color: Color.RED },
+                    { row: 8, col: 2, color: Color.RED },
+                    { row: 8, col: 3, color: Color.RED },
+                    { row: 7, col: 3, color: Color.RED },
+                    { row: 7, col: 4, color: Color.RED },
+                    { row: 6, col: 4, color: Color.RED },
+                    { row: 6, col: 5, color: Color.RED },
+                    { row: 5, col: 5, color: Color.RED },
+                    { row: 5, col: 6, color: Color.RED },
+                    { row: 4, col: 6, color: Color.RED },
+                    { row: 4, col: 7, color: Color.RED },
+                    { row: 3, col: 7, color: Color.RED },
+                    { row: 3, col: 8, color: Color.RED },
+                    { row: 2, col: 8, color: Color.RED },
+                    { row: 2, col: 9, color: Color.RED },
+                    { row: 1, col: 9, color: Color.RED },
+                    { row: 1, col: 10, color: Color.RED },
+                ],
+                stars: [
+                    { row: 1, col: 10 },
+                ]
+            },
+
+            {
+                ship: {
+                    row: 1, col: 1, direction: Direction.RIGHT
+                },
+                functions: [5],
+                paintAvailability: { red: false, green: false, blue: false },
+                cells: [
+                    { row: 1, col: 1, color: Color.RED },
+                    { row: 1, col: 2, color: Color.RED },
+                    { row: 2, col: 2, color: Color.RED },
+                    { row: 2, col: 3, color: Color.RED },
+                    { row: 3, col: 3, color: Color.RED },
+                    { row: 3, col: 4, color: Color.RED },
+                    { row: 4, col: 4, color: Color.RED },
+                    { row: 4, col: 5, color: Color.RED },
+                    { row: 5, col: 5, color: Color.RED },
+                    { row: 5, col: 6, color: Color.RED },
+                    { row: 6, col: 6, color: Color.BLUE },
+                    { row: 6, col: 7, color: Color.BLUE },
+                    { row: 5, col: 7, color: Color.RED },
+                    { row: 5, col: 8, color: Color.RED },
+                    { row: 4, col: 8, color: Color.RED },
+                    { row: 4, col: 9, color: Color.RED },
+                    { row: 3, col: 9, color: Color.RED },
+                    { row: 3, col: 10, color: Color.RED },
+                    { row: 2, col: 10, color: Color.RED },
+                    { row: 2, col: 11, color: Color.RED },
+                    { row: 1, col: 11, color: Color.RED },
+                    { row: 1, col: 12, color: Color.RED },
+                ],
+                stars: [
+                    { row: 1, col: 12 },
+                ]
+            },
+
+            {
+                ship: {
+                    row: 12, col: 1, direction: Direction.TOP
+                },
+                functions: [5],
+                paintAvailability: { red: false, green: false, blue: false },
+                cells: [
+                    { row: 1, col: 1, color: Color.BLUE },
+                    { row: 2, col: 1, color: Color.BLUE },
+                    { row: 2, col: 2, color: Color.BLUE },
+                    { row: 3, col: 2, color: Color.BLUE },
+                    { row: 3, col: 3, color: Color.BLUE },
+                    { row: 4, col: 3, color: Color.BLUE },
+                    { row: 4, col: 4, color: Color.BLUE },
+                    { row: 5, col: 4, color: Color.BLUE },
+                    { row: 5, col: 5, color: Color.BLUE },
+                    { row: 6, col: 5, color: Color.BLUE },
+
+                    { row: 6, col: 6, color: Color.RED },
+                    { row: 7, col: 6, color: Color.RED },
+
+                    { row: 7, col: 5, color: Color.BLUE },
+                    { row: 8, col: 5, color: Color.BLUE },
+                    { row: 8, col: 4, color: Color.BLUE },
+                    { row: 9, col: 4, color: Color.BLUE },
+                    { row: 9, col: 3, color: Color.BLUE },
+                    { row: 10, col: 3, color: Color.BLUE },
+                    { row: 10, col: 2, color: Color.BLUE },
+                    { row: 11, col: 2, color: Color.BLUE },
+                    { row: 11, col: 1, color: Color.BLUE },
+                    { row: 12, col: 1, color: Color.BLUE },
+                ],
+                stars: [
+                    { row: 1, col: 1 },
+                ]
+            },
+
+            {
+                ship: {
+                    row: 1, col: 6, direction: Direction.BOTTOM
+                },
+                functions: [6],
+                paintAvailability: { red: false, green: true, blue: false },
+                cells: [
+                    { row: 1, col: 6, color: Color.BLUE },
+                    { row: 2, col: 6, color: Color.GREEN },
+                    { row: 3, col: 6, color: Color.GREEN },
+                    { row: 4, col: 6, color: Color.GREEN },
+                    { row: 5, col: 6, color: Color.GREEN },
+
+                    { row: 6, col: 1, color: Color.BLUE },
+                    { row: 6, col: 2, color: Color.GREEN },
+                    { row: 6, col: 3, color: Color.GREEN },
+                    { row: 6, col: 4, color: Color.GREEN },
+                    { row: 6, col: 5, color: Color.GREEN },
+                    { row: 6, col: 6, color: Color.RED },
+                    { row: 6, col: 7, color: Color.GREEN },
+                    { row: 6, col: 8, color: Color.GREEN },
+                    { row: 6, col: 9, color: Color.GREEN },
+                    { row: 6, col: 10, color: Color.GREEN },
+                    { row: 6, col: 11, color: Color.BLUE },
+                ],
+                stars: [
+                    { row: 6, col: 1 },
+                    { row: 6, col: 11 }
+                ]
+            },
+
+            {
+                ship: {
                     row: 7, col: 13, direction: Direction.LEFT
                 },
                 functions: [6],
@@ -151,7 +305,7 @@ export const store = createStore<State>({
                 ]
             },
         ],
-        currentLevelIndex: 0,
+        currentLevelIndex: 4,
         grid: {
             ship: { row: 0, col: 0, direction: Direction.TOP },
             cells: [],
