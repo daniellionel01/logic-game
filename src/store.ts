@@ -397,6 +397,7 @@ export const store = createStore<State>({
         loadLevel(state) {
             const level = state.levels[state.currentLevelIndex]
 
+            state.step = 0
             state.functions = [...level.functions.map(num =>
                 ({ instructions: Array.from(Array(num).keys()).map(() =>
                     ({  type: InstructionType.PASS, color: Color.NONE, payload: undefined  })) }))]
