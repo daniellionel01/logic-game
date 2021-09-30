@@ -22,6 +22,7 @@ export default defineComponent({
         const store = useStore()
 
         const gotoNextLevel = () => {
+            store.commit("stop")
             store.commit("gotoNextLevel")
             store.commit("loadLevel")
             store.commit("resetLevel")
