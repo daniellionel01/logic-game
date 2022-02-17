@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import execa from "execa"
+import { execa } from "execa"
 import fs from "fs"
 (async () => {
   try {
