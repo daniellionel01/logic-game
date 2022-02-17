@@ -23,7 +23,7 @@ export default defineComponent({
 
   display: flex;
   justify-content: center;
-  align-items: center;
+  //align-items: center;
 
   font-family: Arial, Helvetica, sans-serif;
 }
