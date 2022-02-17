@@ -9,6 +9,7 @@
     "deploy": "node scripts/gh-pages-deploy.js"
   },
   "dependencies": {
+    "execa": "^6.1.0",
     "vue": "^3.0.5",
     "vuex": "^4.0.2"
   },
