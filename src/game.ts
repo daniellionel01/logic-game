@@ -7,14 +7,14 @@ import level6 from "./levels/level6"
 import level7 from "./levels/level7"
 import level8 from "./levels/level8"
 
-export enum Color {
+export const enum Color {
     NONE,
     RED,
     GREEN,
     BLUE
 }
 
-export enum Direction {
+export const enum Direction {
     TOP,
     RIGHT,
     BOTTOM,
@@ -97,7 +97,10 @@ export interface State {
 }
 
 const state: State = {
-    levels: [],
+    levels: [
+        level1, level2, level3, level4,
+        level5, level6, level7, level8
+    ],
     currentLevelIndex: 0,
     grid: {
         ship: { row: 0, col: 0, direction: Direction.TOP },
@@ -162,7 +165,7 @@ function selectInstruction(state: State, payload: SelectedInstruction) {
         instructionIndex: payload.instructionIndex
     })
 }
-function setSelectedInstruction(state: State, payload: { type: InstructionType, payload: number | undefined, color: Color | undefined }) {
+function setSelectedInstruction(state: State, payload: Instruction) {
     const selectedInstruction =
         state.functions[state.selectedInstruction.functionIndex]
             .instructions[state.selectedInstruction.instructionIndex]
@@ -300,4 +303,134 @@ function collect(state: State, payload: GridCoordinate) {
         ...star,
         collected: true
     })
+}
+
+state.currentLevelIndex = 7
+loadLevel(state)
+
+// permutate
+// if ship position doesnt change for 10 rounds, continue
+// if step > 1000, continue
+
+const instructions: Instruction[] = []
+for (let k = 0; k < 4; k++) { // colors
+    if (k === Color.GREEN) continue;
+    for (let l = 0; l < 6; l++) { // instructions
+        const instruction: InstructionType = l;
+
+        if (l === InstructionType.CALL_FUNCTION) {
+            for (let m = 0; m < 2; m++) {
+                instructions.push({ type: l, color: k, payload: m })
+            }
+        } else {
+            instructions.push({ type: l, color: k, payload: undefined })
+        }
+    }
+}
+
+const instructionTypes = [
+    "PASS",
+    "FORW",
+    "RO_R",
+    "RO_L",
+    "CALL",
+    "COND"
+]
+const colors = [
+    "NON",
+    "RED",
+    "",
+    "BLU"
+]
+
+const total = instructions.length ** 10
+let count = 0
+for (let i0 = 0; i0 < instructions.length; i0++) {
+    for (let i1 = 0; i1 < instructions.length; i1++) {
+        for (let i2 = 0; i2 < instructions.length; i2++) {
+            for (let i3 = 0; i3 < instructions.length; i3++) {
+                for (let i4 = 0; i4 < instructions.length; i4++) {
+                    for (let i5 = 0; i5 < instructions.length; i5++) {
+                        for (let i6 = 0; i6 < instructions.length; i6++) {
+                            for (let i7 = 0; i7 < instructions.length; i7++) {
+                                for (let i8 = 0; i8 < instructions.length; i8++) {
+                                    for (let i9 = 0; i9 < instructions.length; i9++) {
+                                        resetLevel(state);
+
+                                        [i0, i1, i2, i3, i4, i5, i6, i7, i8, i9].forEach((i, index) => {
+                                            const instructionIndex = index % 5;
+                                            const functionIndex = (index / 5) | 0;
+                                            selectInstruction(state, { functionIndex, instructionIndex })
+                                            setSelectedInstruction(state, instructions[i])
+                                            setSelectedInstructionColor(state, instructions[i].color)
+                                        })
+
+                                        count += 1
+                                        console.log("simulating", count, "/", total)
+                                        console.log("configuration")
+                                        for (let fi = 0; fi < 2; fi++) {
+                                            let line = ""
+                                            for (let ii = 0; ii < 5; ii++) {
+                                                const instruc = state.functions[fi].instructions[ii] 
+                                                const type = instructionTypes[instruc.type]
+                                                const col = colors[instruc.color]
+                                                line += `[${type} ${col} ${instruc.payload === undefined ? " " : instruc.payload}]`
+                                            }
+                                            console.log(line)
+                                        }
+                                        console.log()
+
+                                        const won = round(state)
+                                        stop(state)
+
+                                        if (won) {
+                                            console.log("Won")
+                                            process.exit(0)
+                                        } else {
+                                            console.log("Lost")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// returns won
+function round(state: State): boolean {
+    initStack(state)
+    play(state)
+
+    let lastShipCell: Cell | undefined;
+    let notMovedCount = 0;
+
+    while(!isLost(state) && !hasWon(state)) {
+        step(state)
+
+        const shipCell = getShipCell(state)
+        if (!shipCell) continue;
+
+        if (lastShipCell) {
+            if (shipCell.col === lastShipCell.col && shipCell.row === lastShipCell.row) {
+                notMovedCount += 1
+            } else {
+                notMovedCount = 0
+            }
+        }
+        lastShipCell = shipCell
+
+        if (notMovedCount > 10 || state.step > 1_000) {
+            return false
+        }
+
+        const star = state.grid.stars.find(star => star.row === shipCell.row && star.col === shipCell.col)
+        if (!star) continue;
+        if (star.collected) continue;
+        collect(state, star)
+    }
+    return hasWon(state)
 }
