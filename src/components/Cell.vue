@@ -80,7 +80,6 @@ export default defineComponent({
   align-items: center;
 
   color: white;
-  font-size: 1.25em;
 }
 #ship {
   height: 100%;
@@ -90,6 +89,5 @@ export default defineComponent({
   align-items: center;
 
   color: white;
-  font-size: 1.25em;
 }
 </style>
