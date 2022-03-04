@@ -3,10 +3,20 @@ use std::time::Duration;
 extern crate num_cpus;
 
 enum Direction {
-    UP, DOWN, LEFT, RIGHT
+    Up, Down, Left, Right
 }
 enum Color {
-    RED, GREEN, BLUE, NONE
+    Red, Green, Blue, None
+}
+enum InstructionType {
+    Pass, Forward, RotateLeft, RotateRight,
+    CallFunction, Paint
+}
+
+struct Instruction {
+    instruction_type: InstructionType,
+    color: Color,
+    payload: u32,
 }
 
 struct Ship {
@@ -31,15 +41,53 @@ fn game() {
     let step: u32 = 0;
 }
 
-// permutations array
-// total permutations
-
 fn main() {
+    let colors: Vec<Color> = vec![
+        Color::None,
+        Color::Red,
+        Color::Green,
+        Color::Blue
+    ];
+    let instructions: Vec<InstructionType> = vec![
+        InstructionType::Pass,
+        InstructionType::Forward,
+        InstructionType::RotateLeft,
+        InstructionType::RotateRight,
+        InstructionType::CallFunction,
+        InstructionType::Paint
+    ];
+    let permutations: Vec<Instruction> = vec![];
+    for c in colors {
+        for i in instructions {
+            let instruction: Instruction = Instruction {
+                instruction_type: i,
+                color: c,
+                payload: 0
+            };
+            permutations.push(instruction);
+
+            if i == InstructionType::CallFunction {
+                let inst: Instruction = instruction.copy
+                permutations.push(instruction);
+            }
+        }
+    }
+
+    let mut total: i32 = 24;
+    total = total.pow(10);
+
+    // permutations array
+    // total permutations
+
     // get count of cpu cores
     // spawn as many threads
     // each for one segment of total permutations
     // thread::spawn(|| { });
 
-    let num = num_cpus::get();
-    println!("{}", num);
+    let cpus = num_cpus::get();
+    for i in 0..cpus {
+        println!("{}", i);
+    }
+
+    println!("{}", total)
 }
