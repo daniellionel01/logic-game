@@ -91,15 +91,36 @@ fn main() {
     total = total.pow(10);
     println!("{}", total);
 
-    for perm in &permutations {
-        println!("{:?} {:?} {:?}", perm.instruction_type, perm.color, perm.payload);
-    }
-
     let cores = num_cpus::get();
     println!("cpu cores: {}", cores);
 
-    // get count of cpu cores
-    // spawn as many threads
-    // each for one segment of total permutations
+    let x: Vec<usize> = vec![permutations.len(); 10];
+    nested(x, |items| {
+        println!("{:?}", items);
+    });
+
     // thread::spawn(|| { });
+    // for _ in 0..cores { }
+}
+
+fn nested(n: Vec<usize>, cb: fn(Vec<usize>)) {
+    nested_rec(n, cb, vec![])
+}
+fn nested_rec(mut n: Vec<usize>, cb: fn(Vec<usize>), items: Vec<usize>) {
+    println!("n: {:?}", n);
+
+    if let Some(i) = n.pop() {
+        for j in 0..i {
+            let mut items2: Vec<usize> = Vec::new();
+            items2.extend(items.iter().copied());
+            items2.push(j);
+
+            let mut n_new: Vec<usize> = Vec::new();
+            n_new.extend(n.iter().copied());
+
+            nested_rec(n_new, cb, items2);
+        }
+    } else {
+        cb(items);
+    }
 }
