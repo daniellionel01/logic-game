@@ -366,6 +366,9 @@ for (let i0 = 0; i0 < instructions.length; i0++) {
                                         })
 
                                         count += 1
+                                        if (count < 536843731) {
+                                            continue
+                                        }
                                         console.log("simulating", count, "/", total)
                                         console.log("configuration")
                                         for (let fi = 0; fi < 2; fi++) {
