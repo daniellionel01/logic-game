@@ -107,8 +107,6 @@ fn nested(n: Vec<usize>, cb: fn(Vec<usize>)) {
     nested_rec(n, cb, vec![])
 }
 fn nested_rec(mut n: Vec<usize>, cb: fn(Vec<usize>), items: Vec<usize>) {
-    println!("n: {:?}", n);
-
     if let Some(i) = n.pop() {
         for j in 0..i {
             let mut items2: Vec<usize> = Vec::new();
