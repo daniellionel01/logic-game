@@ -94,10 +94,15 @@ fn main() {
     let cores = num_cpus::get();
     println!("cpu cores: {}", cores);
 
-    let x: Vec<usize> = vec![permutations.len(); 10];
-    nested(x, |items| {
-        println!("{:?}", items);
-    });
+    let tens: Vec<usize> = vec![permutations.len()-1; 10];
+    for i in 0..cores {
+        let mut pems: Vec<usize> = vec![i];
+        pems.extend(tens.iter().copied());
+        println!("{:?}", pems);
+    }
+    // nested(x, |items| {
+    //     println!("{:?}", items);
+    // });
 
     // thread::spawn(|| { });
     // for _ in 0..cores { }
