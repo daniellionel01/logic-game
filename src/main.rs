@@ -1,52 +1,6 @@
-//use std::thread;
-//use std::time::Duration;
 extern crate num_cpus;
 
-#[derive(Debug, Clone)]
-enum Direction {
-    Up, Down, Left, Right
-}
-#[derive(Debug, Clone)]
-enum Color {
-    Red, Green, Blue, None
-}
-#[derive(Debug, Clone)]
-enum InstructionType {
-    Pass, Forward, RotateLeft, RotateRight,
-    CallFunction, Paint
-}
-
-#[derive(Debug, Clone)]
-struct Instruction {
-    instruction_type: InstructionType,
-    color: Color,
-    payload: u32,
-}
-
-#[derive(Debug, Clone)]
-struct Ship {
-    x: i64,
-    y: i64,
-    dir: Direction
-}
-
-#[derive(Debug, Clone)]
-struct Cell {
-    x: i64,
-    y: i64,
-    color: Color,
-}
-
-#[derive(Debug, Clone)]
-struct Star {
-    x: i64,
-    y: i64,
-    collected: bool
-}
-
-fn game() {
-    let step: u32 = 0;
-}
+use logic_game::{Color, Instruction, InstructionType};
 
 fn main() {
     let colors: Vec<Color> = vec![
@@ -66,9 +20,9 @@ fn main() {
     for c in &colors {
         for i in &instructions {
             let instruction: Instruction = Instruction {
-                instruction_type: i.clone(),
-                color: c.clone(),
-                payload: 0
+                instruct_type: i.clone(),
+                paint_color: c.clone(),
+                call_func: 0
             };
             permutations.push(instruction.clone());
 
@@ -78,7 +32,7 @@ fn main() {
             };
             if is_call {
                 permutations.push(Instruction {
-                    payload: 1,
+                    call_func: 1,
                     ..instruction
                 });
             }
@@ -98,9 +52,6 @@ fn main() {
     nested(x, |items| {
         println!("{:?}", items);
     });
-
-    // thread::spawn(|| { });
-    // for _ in 0..cores { }
 }
 
 fn nested(n: Vec<usize>, cb: fn(Vec<usize>)) {
