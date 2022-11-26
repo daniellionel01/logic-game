@@ -1,5 +1,5 @@
-import { createStore, useStore as baseUseStore, Store } from 'vuex';
-import { InjectionKey } from 'vue'
+import { createStore, useStore as baseUseStore, Store } from "vuex";
+import { InjectionKey } from "vue"
 
 export enum Color {
     NONE,
@@ -506,7 +506,7 @@ export const store = createStore<State>({
                 ]
             },
         ],
-        currentLevelIndex: 0,
+        currentLevelIndex: 1,
         grid: {
             ship: { row: 0, col: 0, direction: Direction.TOP },
             cells: [],
