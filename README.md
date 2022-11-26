@@ -7,6 +7,7 @@ The files, and parts of this readme file, are based on the [vite vue-ts](https:/
 This repo is hosted on GitHub Pages at [https://daniellionel01.github.io/logic-game/](https://daniellionel01.github.io/logic-game/)
 
 ## Todos
+- [ ] setup vercel
 - [ ] layout (align horizontally on bigger screens)
 - [ ] better function input (dnd, move to the right immediately)
 - [ ] function input shortcut (digits, shift+digit -> moves to the next one)

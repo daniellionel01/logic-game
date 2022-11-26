@@ -1,8 +1,12 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from "vite";
+import solidPlugin from "vite-plugin-solid";
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
-  base: "/logic-game/"
-})
+  plugins: [solidPlugin()],
+  server: {
+    port: 3000,
+  },
+  build: {
+    target: "esnext"
+  },
+});
