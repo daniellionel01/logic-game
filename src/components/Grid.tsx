@@ -1,7 +1,7 @@
 import {Component, createMemo, For} from "solid-js";
 import {makeArray} from "../utils";
 import Cell from "./Cell";
-import {useLevel} from "./Level";
+import {useLevel} from "../context/Level";
 
 const Grid: Component = () => {
   const [_level, width, height] = useLevel()

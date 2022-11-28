@@ -1,6 +1,6 @@
 import { Component, createMemo } from "solid-js";
 import Grid from "./components/Grid"
-import {LevelProvider} from "./components/Level";
+import {LevelProvider} from "./context/Level";
 import { gameStore } from "./store";
 
 const App: Component = () => {
@@ -13,8 +13,10 @@ const App: Component = () => {
       <div class="container mx-auto mt-20">
         <h1 class="text-4xl font-bold">Logic Game</h1>
         <h2 class="text-3xl font-semibold mt-3">Level {level()}</h2>
-        <div>
+        <div class="mt-8">
           <Grid />
+        </div>
+        <div class="mt-8">
         </div>
       </div>
     </LevelProvider>

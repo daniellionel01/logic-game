@@ -91,7 +91,7 @@ export function makeEmptyCell(row: number, col: number): Cell {
 
 const init: GlobalStore = {
   levels,
-  currentLevelIndex: 0,
+  currentLevelIndex: 7,
   game: getInitialGameState(levels[0])
 }
 

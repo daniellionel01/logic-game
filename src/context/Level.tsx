@@ -20,14 +20,14 @@ export function LevelProvider(props: ParentProps) {
     if (cols.length === 0) return 0;
     const min = Math.min(...cols)
     const max = Math.max(...cols)
-    return max - min + 1
+    return max - min + 1 + 2
   })
   const height = createMemo(() => {
     const rows = level().cells.map(c => c.row)
     if (rows.length === 0) return 0;
     const min = Math.min(...rows)
     const max = Math.max(...rows)
-    return max - min + 1
+    return max - min + 1 + 2
   })
 
   const value: LevelData = [level, width, height]
