@@ -52,10 +52,14 @@ const Cell: Component<CellProps> = (props: CellProps) => {
     throw new Error("Missing rotation value")
   })
 
+  const color = createMemo(() => {
+    return cell().color === "NONE" ? "text-black" : "text-white"
+  })
+
   return (
     <div
-      class={`w-14 border-2 rounded-2xl aspect-square ${bg()} ${rotate()}`}
-      classList={{ "flex justify-center items-center text-white": isStar() || isShip() }}
+      class={`w-14 rounded-2xl aspect-square text-xl ${bg()} ${rotate()} ${color()}`}
+      classList={{ "flex justify-center items-center": isStar() || isShip() }}
       style="box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.08), 0 0 20px 0 rgba(0, 0, 0, 0.05);"
     >
       <Show when={isStar()}>
