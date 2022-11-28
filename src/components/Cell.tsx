@@ -17,7 +17,7 @@ const COLORS: Record<Color, string> = {
 const Cell: Component<CellProps> = (props: CellProps) => {
   const { row, col } = props
 
-  const [level, width, _height] = useLevel()
+  const { level } = useLevel()
 
   const cell = createMemo<ICell>(() => {
     const found = level().cells.find(c => c.row === row && c.col === col)

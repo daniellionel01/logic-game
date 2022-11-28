@@ -4,7 +4,7 @@ import Cell from "./Cell";
 import {useLevel} from "../context/Level";
 
 const Grid: Component = () => {
-  const [_level, width, height] = useLevel()
+  const { width, height } = useLevel()
 
   const rows = createMemo(() => makeArray(height()))
   const cols = createMemo(() => makeArray(width()))

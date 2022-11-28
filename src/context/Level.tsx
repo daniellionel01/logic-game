@@ -1,11 +1,11 @@
 import {Accessor, createContext, createMemo, ParentProps, useContext} from "solid-js";
 import {gameStore, Level} from "../store";
 
-type LevelData = [
-  Accessor<Level>,
-  Accessor<number>,
-  Accessor<number>
-]
+type LevelData = {
+  level: Accessor<Level>
+  width: Accessor<number>
+  height: Accessor<number>
+}
 
 const LevelContext = createContext<LevelData>()
 
@@ -30,7 +30,7 @@ export function LevelProvider(props: ParentProps) {
     return max - min + 1 + 2
   })
 
-  const value: LevelData = [level, width, height]
+  const value: LevelData = { level, width, height }
   return (
     <LevelContext.Provider value={value}>
       {props.children}
