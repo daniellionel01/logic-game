@@ -8,8 +8,8 @@ const ExecutionStack: Component = () => {
   const { level } = useLevel()
 
   return (
-    <div class="border-2 border-gray-700 rounded-xl w-full h-12">
-      
+    <div class="border-2 border-gray-700 rounded-2xl w-full h-12">
+
     </div>
   )
 }

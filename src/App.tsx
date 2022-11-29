@@ -1,8 +1,10 @@
 import { Component, createMemo } from "solid-js";
 import Grid from "./components/Grid"
 import ExecutionStack from "./components/ExecutionStack";
+import Actions from "./components/Actions";
 import {LevelProvider} from "./context/Level";
 import { gameStore } from "./store";
+import Functions from "./components/Functions";
 
 const App: Component = () => {
   const [state, _setState] = gameStore
@@ -19,6 +21,12 @@ const App: Component = () => {
         </div>
         <div class="mt-8">
           <ExecutionStack />
+        </div>
+        <div class="mt-8">
+          <Actions />
+        </div>
+        <div class="mt-8">
+          <Functions />
         </div>
       </div>
     </LevelProvider>

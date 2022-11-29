@@ -21,10 +21,11 @@ export enum InstructionType {
   ROT_R, ROT_L,
   CALL_FN, COND_COLOR, PAINT_COLOR
 }
+export type InstructionPayload = number
 export interface Instruction {
   type: InstructionType;
   color: Color;
-  payload?: number;
+  payload?: InstructionPayload;
 }
 
 export type Function = Instruction[]
