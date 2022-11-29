@@ -1,5 +1,6 @@
 import { Component, createMemo } from "solid-js";
 import Grid from "./components/Grid"
+import ExecutionStack from "./components/ExecutionStack";
 import {LevelProvider} from "./context/Level";
 import { gameStore } from "./store";
 
@@ -17,6 +18,7 @@ const App: Component = () => {
           <Grid />
         </div>
         <div class="mt-8">
+          <ExecutionStack />
         </div>
       </div>
     </LevelProvider>
