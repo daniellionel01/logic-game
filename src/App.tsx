@@ -22,10 +22,8 @@ const App: Component = () => {
         <div class="mt-8">
           <ExecutionStack />
         </div>
-        <div class="mt-8">
+        <div class="mt-8 flex justify-between">
           <Actions />
-        </div>
-        <div class="mt-8">
           <Functions />
         </div>
       </div>
