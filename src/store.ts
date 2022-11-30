@@ -80,8 +80,7 @@ export interface GlobalStore {
 
 export function getInitialGameState(level: Level): GameState {
   const functions = level.functions.map(n => Array.from(Array(n).keys()).map(_ => ({
-    type: InstructionType.PASS,
-    color: "NONE"
+    type: InstructionType.PASS
   }) as Instruction))
   return {
     ship: { ...level.ship },
@@ -107,10 +106,11 @@ export function calculateStack(setState: SetStoreFunction<GlobalStore>) {
   }))
 }
 
+const lvlIndex = 1
 const init: GlobalStore = {
   levels,
-  currentLevelIndex: 7,
-  game: getInitialGameState(levels[0])
+  currentLevelIndex: lvlIndex,
+  game: getInitialGameState(levels[lvlIndex])
 }
 
 export const gameStore = createRoot(() => createLocalStore("game", init))

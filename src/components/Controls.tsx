@@ -1,20 +1,25 @@
-import {Component, createMemo} from "solid-js";
+import {Component, createEffect, createMemo} from "solid-js";
 import {useLevel} from "../context/Level";
-import {gameStore} from "../store";
+import {gameStore, InstructionType} from "../store";
 
 const Controls: Component = () => {
   const [state] = gameStore
 
   const { won, lost } = useLevel()
 
+  const emptyStack = createMemo(() => {
+    const nonPass = state.game.stack.find(s => s.type !== InstructionType.PASS)
+    return !nonPass
+  })
+
   const playDisabled = createMemo(() => {
-    return state.game.stack.length === 0
+    return won() || lost() || emptyStack()
   })
   const stepDisabled = createMemo(() => {
-    return state.game.stack.length === 0 || state.game.running
+    return won() || lost() || emptyStack() || state.game.running
   })
   const stopDisabled = createMemo(() => {
-    return state.game.step === 0
+    return won() || lost() || state.game.step === 0
   })
 
   return (
