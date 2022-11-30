@@ -14,6 +14,9 @@ This repo is hosted on GitHub Pages at [https://daniellionel01.github.io/logic-g
 - [ ] better function cell color toggle
 - [ ] limit execution stack
 - [ ] prettier ui
+- [ ] won / lost states
+- [ ] limit stack size
+- [ ] incr / decr game clock
 
 ## Third Party Licenses
 
