@@ -1,6 +1,7 @@
-import { createRoot } from "solid-js";
+import { createEffect, createRoot } from "solid-js";
 import { createLocalStore } from "./utils"
 import levels from "./levels/index"
+import {produce, SetStoreFunction} from "solid-js/store";
 
 export type Color = "NONE" | "RED" | "GREEN" | "BLUE"
 export type Direction = "TOP" | "RIGHT" | "BOTTOM" | "LEFT"
@@ -100,6 +101,12 @@ export function makeEmptyCell(row: number, col: number): Cell {
   return { row, col, color: "NONE" }
 }
 
+export function calculateStack(setState: SetStoreFunction<GlobalStore>) {
+  setState(produce(s => {
+    s.game.stack = [...s.game.functions[0]]
+  }))
+}
+
 const init: GlobalStore = {
   levels,
   currentLevelIndex: 7,
@@ -107,3 +114,4 @@ const init: GlobalStore = {
 }
 
 export const gameStore = createRoot(() => createLocalStore("game", init))
+

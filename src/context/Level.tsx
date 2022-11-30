@@ -5,6 +5,8 @@ type LevelData = {
   level: Accessor<Level>
   width: Accessor<number>
   height: Accessor<number>
+  lost: Accessor<boolean>
+  won: Accessor<boolean>
 }
 
 const LevelContext = createContext<LevelData>()
@@ -30,7 +32,18 @@ export function LevelProvider(props: ParentProps) {
     return max - min + 1 + 2
   })
 
-  const value: LevelData = { level, width, height }
+  const lost = createMemo(() => {
+    const ship = state.game.ship
+    const shipCell = level().cells.find(c => {
+      return c.row === ship.row && c.col === ship.col
+    })
+    return !shipCell
+  })
+  const won = createMemo(() => {
+    return state.game.starsCollected.length === level().stars.length
+  })
+
+  const value: LevelData = { level, width, height, lost, won }
   return (
     <LevelContext.Provider value={value}>
       {props.children}

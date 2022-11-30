@@ -1,7 +1,7 @@
 import {Component, createMemo, For} from "solid-js";
 import {produce} from "solid-js/store";
 import {useLevel} from "../context/Level";
-import {Color, gameStore, InstructionType} from "../store";
+import {calculateStack, Color, gameStore, InstructionType} from "../store";
 import {makeArray} from "../utils";
 import InstructionSymbol from "./InstructionSymbol";
 
@@ -26,15 +26,17 @@ const Actions: Component = () => {
           ...existing, condColor: newCondColor
         }
       }))
-      return;
+    } else {
+      setState(produce(s => {
+        const existing = s.game.functions[fni][instructIndex]
+        s.game.functions[fni][instructIndex] = {
+          type, fnIndex, paintColor,
+          condColor: existing.condColor
+        }
+      }))
     }
-    setState(produce(s => {
-      const existing = s.game.functions[fni][instructIndex]
-      s.game.functions[fni][instructIndex] = {
-        type, fnIndex, paintColor,
-        condColor: existing.condColor
-      }
-    }))
+
+    calculateStack(setState)
   }
 
   return (
