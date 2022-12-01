@@ -15,6 +15,12 @@ This repo is hosted on GitHub Pages at [https://daniellionel01.github.io/logic-g
 - [ ] layout (align horizontally on bigger screens)
 - [ ] limit execution stack
 
+## Cleaner Code Todos
+- [ ] get ship cell utility
+- [ ] is star utility
+- [ ] is star select utility
+- [ ] compare positions (star / cell / ship) utility
+
 ## Extra Todos
 - [ ] incr / decr game clock
 - [ ] better function input (dnd, move to the right immediately)

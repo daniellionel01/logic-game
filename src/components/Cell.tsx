@@ -21,7 +21,7 @@ const Cell: Component<CellProps> = (props: CellProps) => {
   const { level } = useLevel()
 
   const cell = createMemo<ICell>(() => {
-    const found = level().cells.find(c => c.row === row && c.col === col)
+    const found = state.game.cells.find(c => c.row === row && c.col === col)
     return found || makeEmptyCell(row, col)
   })
   const bg = createMemo(() => {

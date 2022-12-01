@@ -1,7 +1,7 @@
 import {Component, createEffect, createMemo, createSignal, on, onCleanup, ParentProps} from "solid-js"
 import {produce} from "solid-js/store"
 import {useLevel} from "../context/Level"
-import {CallFnInstruction, gameStore, InstructionType} from "../store"
+import {CallFnInstruction, gameStore, InstructionType, PaintColorInstruction} from "../store"
 
 const labels = {
   [InstructionType.FORWARD]: "forward",
@@ -23,7 +23,7 @@ const Game: Component = (props: ParentProps) => {
       s.game.stack.splice(0, 1)
 
       if (!!nextInstruction.condColor && nextInstruction.condColor !== "NONE") {
-        const cell = level().cells.find(c => c.row === ship.row && c.col === ship.col)
+        const cell = state.game.cells.find(c => c.row === ship.row && c.col === ship.col)
         if (cell && cell.color !== nextInstruction.condColor) {
           return;
         }
@@ -64,7 +64,12 @@ const Game: Component = (props: ParentProps) => {
         const instructions = state.game.functions[fnIns.fnIndex].filter(s => s.type !== InstructionType.PASS)
         s.game.stack.unshift(...instructions)
       } else if (nextInstruction.type === InstructionType.PAINT_COLOR) {
-        // TODO
+        const colorIns = nextInstruction as PaintColorInstruction
+
+        const cell = state.game.cells.find(c => c.row === ship.row && c.col === ship.col)
+        if (!cell) return;
+        const index = state.game.cells.indexOf(cell)
+        s.game.cells[index].color = colorIns.paintColor
       }
     }))
   }

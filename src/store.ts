@@ -66,6 +66,7 @@ export interface GameState {
   ship: Ship;
   starsCollected: Position[];
   functions: Function[];
+  cells: Cell[];
   stack: Instruction[];
   selectedInstruct: SelectedInstruction;
   step: number;
@@ -86,6 +87,7 @@ export function getInitialGameState(level: Level): GameState {
     ship: { ...level.ship },
     starsCollected: [],
     functions,
+    cells: [...level.cells],
     stack: [],
     selectedInstruct: {
       fnIndex: 0,
@@ -104,6 +106,18 @@ export function calculateStack(setState: SetStoreFunction<GlobalStore>) {
   setState(produce(s => {
     const ins = s.game.functions[0].filter(i => i.type !== InstructionType.PASS)
     s.game.stack = [...ins]
+  }))
+}
+
+export function loadLevel(index: number, setState: SetStoreFunction<GlobalStore>) {
+  setState(produce(s => {
+    if (index >= s.levels.length-1) {
+      return;
+    }
+
+    const lvl = s.levels[index]
+    s.game = getInitialGameState(lvl)
+    s.currentLevelIndex = index
   }))
 }
 

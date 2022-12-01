@@ -1,7 +1,6 @@
 import {Component} from "solid-js";
-import {produce} from "solid-js/store";
 import {useLevel} from "../context/Level";
-import {gameStore, getInitialGameState} from "../store";
+import {gameStore, loadLevel} from "../store";
 
 
 const WonDialog: Component = () => {
@@ -10,15 +9,7 @@ const WonDialog: Component = () => {
   const { won } = useLevel()
 
   const gotoNextLevel = () => {
-    setState(produce((s) => {
-      if (state.currentLevelIndex >= state.levels.length-1) {
-        return;
-      }
-
-      const lvl = state.levels[state.currentLevelIndex+1]
-      s.game = getInitialGameState(lvl)
-      s.currentLevelIndex += 1
-    }))
+    loadLevel(state.currentLevelIndex+1, setState)
   }
 
   return (

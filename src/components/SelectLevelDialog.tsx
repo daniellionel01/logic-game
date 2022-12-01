@@ -1,6 +1,5 @@
 import {Component, For} from "solid-js";
-import {produce} from "solid-js/store";
-import {gameStore, getInitialGameState} from "../store";
+import {gameStore, loadLevel} from "../store";
 
 const dialogID = "select-level-dialog"
 
@@ -8,11 +7,7 @@ const SelectLevelDialog: Component = () => {
   const [state, setState] = gameStore
 
   const selectLevel = (index: number) => {
-    setState(produce(s => {
-      const lvl = state.levels[index]
-      s.game = getInitialGameState(lvl)
-      s.currentLevelIndex = index
-    }))
+    loadLevel(index, setState)
   }
 
   return (
