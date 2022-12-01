@@ -1,5 +1,4 @@
-import {Component, createEffect, For} from "solid-js";
-import {useLevel} from "../context/Level";
+import {Component, For} from "solid-js";
 import {gameStore} from "../store";
 import InstructionSymbol from "./InstructionSymbol";
 

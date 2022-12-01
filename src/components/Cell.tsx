@@ -1,5 +1,5 @@
 import { Component, createMemo, Show } from "solid-js"
-import { Cell as ICell, Color, makeEmptyCell } from "../store";
+import { Cell as ICell, Color, gameStore, makeEmptyCell } from "../store";
 import {useLevel} from "../context/Level";
 
 export interface CellProps {
@@ -17,6 +17,7 @@ const COLORS: Record<Color, string> = {
 const Cell: Component<CellProps> = (props: CellProps) => {
   const { row, col } = props
 
+  const [state] = gameStore
   const { level } = useLevel()
 
   const cell = createMemo<ICell>(() => {
@@ -28,11 +29,15 @@ const Cell: Component<CellProps> = (props: CellProps) => {
   })
 
   const isStar = createMemo<boolean>(() => {
-    return !!level().stars.find(s => s.row === row && s.col === col)
+    const star = level().stars.find(s => s.row === row && s.col === col)
+    if (!star) return false;
+
+    const collected = state.game.starsCollected.find(s => s.col === star.col && s.row === star.row)
+    return !collected
   })
 
   const isShip = createMemo<boolean>(() => {
-    const s = level().ship
+    const s = state.game.ship
     return s.col === col && s.row === row
   })
 
@@ -58,8 +63,7 @@ const Cell: Component<CellProps> = (props: CellProps) => {
 
   return (
     <div
-      class={`w-14 rounded-2xl aspect-square text-xl ${bg()} ${rotate()} ${color()}`}
-      classList={{ "flex justify-center items-center": isStar() || isShip() }}
+      class={`w-14 flex justify-center items-center rounded-2xl aspect-square text-xl ${bg()} ${rotate()} ${color()}`}
       style="box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.08), 0 0 20px 0 rgba(0, 0, 0, 0.05);"
     >
       <Show when={isStar()}>
