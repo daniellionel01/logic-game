@@ -13,7 +13,7 @@ const InstructionSymbol: Component<InstructionSymbolProps> = (props: Instruction
 
   return (
     <div
-      class="w-full h-full flex justify-center items-center"
+      class="w-full h-full flex justify-center items-center font-semibold text-lg"
       classList={{
         "bg-red-500": condColor === "RED",
         "bg-blue-500": condColor === "BLUE",

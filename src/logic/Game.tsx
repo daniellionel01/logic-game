@@ -1,7 +1,12 @@
 import {Component, createEffect, createMemo, createSignal, on, onCleanup, ParentProps} from "solid-js"
 import {produce} from "solid-js/store"
 import {useLevel} from "../context/Level"
-import {gameStore} from "../store"
+import {CallFnInstruction, gameStore, InstructionType} from "../store"
+
+const labels = {
+  [InstructionType.FORWARD]: "forward",
+  [InstructionType.CALL_FN]: "call fn",
+}
 
 const Game: Component = (props: ParentProps) => {
   const [state, setState] = gameStore
@@ -10,15 +15,57 @@ const Game: Component = (props: ParentProps) => {
 
   const tick = () => {
     setState(produce((s) => {
-      const nextInstruction = s.game.stack.pop()
+      s.game.step += 1
 
       const ship = s.game.ship;
-      s.game.ship = {
-        ...ship,
-        col: ship.col+1
+
+      const nextInstruction = { ...s.game.stack[0] }
+      s.game.stack.splice(0, 1)
+
+      if (!!nextInstruction.condColor && nextInstruction.condColor !== "NONE") {
+        const cell = level().cells.find(c => c.row === ship.row && c.col === ship.col)
+        if (cell && cell.color !== nextInstruction.condColor) {
+          return;
+        }
       }
 
-      s.game.step += 1
+      if (nextInstruction.type === InstructionType.FORWARD) {
+        if (ship.dir === "TOP") {
+          s.game.ship = { ...ship, row: ship.row-1 }
+        } else if (ship.dir === "BOTTOM") {
+          s.game.ship = { ...ship, row: ship.row+1 }
+        } else if (ship.dir === "LEFT") {
+          s.game.ship = { ...ship, col: ship.col-1 }
+        } else if (ship.dir === "RIGHT") {
+          s.game.ship = { ...ship, col: ship.col+1 }
+        }
+      } else if (nextInstruction.type === InstructionType.ROT_L) {
+        if (ship.dir === "RIGHT") {
+          s.game.ship = { ...ship, dir: "TOP" }
+        } else if (ship.dir === "BOTTOM") {
+          s.game.ship = { ...ship, dir: "RIGHT" }
+        } else if (ship.dir === "LEFT") {
+          s.game.ship = { ...ship, dir: "BOTTOM" }
+        } else if (ship.dir === "TOP") {
+          s.game.ship = { ...ship, dir: "LEFT" }
+        }
+      } else if (nextInstruction.type === InstructionType.ROT_R) {
+        if (ship.dir === "RIGHT") {
+          s.game.ship = { ...ship, dir: "BOTTOM" }
+        } else if (ship.dir === "BOTTOM") {
+          s.game.ship = { ...ship, dir: "LEFT" }
+        } else if (ship.dir === "LEFT") {
+          s.game.ship = { ...ship, dir: "TOP" }
+        } else if (ship.dir === "TOP") {
+          s.game.ship = { ...ship, dir: "RIGHT" }
+        }
+      } else if (nextInstruction.type === InstructionType.CALL_FN) {
+        const fnIns = nextInstruction as CallFnInstruction
+        const instructions = state.game.functions[fnIns.fnIndex].filter(s => s.type !== InstructionType.PASS)
+        s.game.stack.unshift(...instructions)
+      } else if (nextInstruction.type === InstructionType.PAINT_COLOR) {
+        // TODO
+      }
     }))
   }
 
