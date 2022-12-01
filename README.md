@@ -6,18 +6,29 @@ The files, and parts of this readme file, are based on the [vite vue-ts](https:/
 
 This repo is hosted on GitHub Pages at [https://daniellionel01.github.io/logic-game/](https://daniellionel01.github.io/logic-game/)
 
-## Todos
+## Functional Todos
+- [x] won / lost states
+- [ ] paint color instruction
+- [ ] help dialog
+- [ ] select level
 - [ ] setup vercel
 - [ ] layout (align horizontally on bigger screens)
+- [ ] limit execution stack
+
+## Extra Todos
+- [ ] incr / decr game clock
 - [ ] better function input (dnd, move to the right immediately)
 - [ ] function input shortcut (digits, shift+digit -> moves to the next one)
 - [ ] better function cell color toggle
-- [ ] limit execution stack
 - [ ] prettier ui
-- [ ] won / lost states
-- [ ] limit stack size
-- [ ] incr / decr game clock
+
+## Techstack
+- TypeScript
+- NodeJS
+- Vite
+- SolidJS
+- TailwindCSS
+- DaisyUI
 
 ## Third Party Licenses
-
 - Font Awesome: https://fontawesome.com/license (no changes were made to the icons)
