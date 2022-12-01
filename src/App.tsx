@@ -34,11 +34,11 @@ const App: Component = () => {
             <ExecutionStack />
             <Controls />
           </div>
-          <div class="mt-8 flex justify-between">
+          <div class="mt-8 block lg:flex justify-between">
             <div>
               <Grid />
             </div>
-            <div class="flex space-x-20">
+            <div class="flex space-x-20 mt-8 lg:mt-0">
               <div class="space-y-2">
                 <h1 class="text-lg font-bold">Functions</h1>
                 <Functions />
