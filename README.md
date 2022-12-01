@@ -10,7 +10,7 @@ This repo is hosted on GitHub Pages at [https://daniellionel01.github.io/logic-g
 - [x] won / lost states
 - [x] help dialog
 - [x] select level
-- [ ] paint color instruction
+- [x] paint color instruction
 - [ ] setup vercel
 - [ ] layout (align horizontally on bigger screens)
 - [ ] limit execution stack
@@ -22,6 +22,7 @@ This repo is hosted on GitHub Pages at [https://daniellionel01.github.io/logic-g
 - [ ] compare positions (star / cell / ship) utility
 
 ## Extra Todos
+- [ ] clear local storage button
 - [ ] incr / decr game clock
 - [ ] better function input (dnd, move to the right immediately)
 - [ ] function input shortcut (digits, shift+digit -> moves to the next one)
