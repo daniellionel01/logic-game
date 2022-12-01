@@ -8,9 +8,9 @@ This repo is hosted on GitHub Pages at [https://daniellionel01.github.io/logic-g
 
 ## Functional Todos
 - [x] won / lost states
-- [ ] help dialog
+- [x] help dialog
+- [x] select level
 - [ ] paint color instruction
-- [ ] select level
 - [ ] setup vercel
 - [ ] layout (align horizontally on bigger screens)
 - [ ] limit execution stack
