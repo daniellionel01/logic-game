@@ -6,7 +6,7 @@ const ExecutionStack: Component = () => {
   const [state] = gameStore
 
   return (
-    <div class="border-2 border-gray-700 rounded-2xl w-full h-12 flex overflow-hidden">
+    <div class="border-4 border-purple-300 shadow-lg rounded-2xl w-full h-12 flex overflow-hidden">
       <For each={state.game.stack}>
         {ins => (
           <div class="aspect-square h-full">

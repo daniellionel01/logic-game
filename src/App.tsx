@@ -30,7 +30,7 @@ const App: Component = () => {
               <SelectLevelDialog />
             </div>
           </div>
-          <div class="mt-8 flex space-x-2">
+          <div class="mt-8 flex space-x-4">
             <ExecutionStack />
             <Controls />
           </div>
@@ -38,7 +38,7 @@ const App: Component = () => {
             <div>
               <Grid />
             </div>
-            <div class="mt-8 flex space-x-20">
+            <div class="flex space-x-20">
               <div class="space-y-2">
                 <h1 class="text-lg font-bold">Functions</h1>
                 <Functions />
