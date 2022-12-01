@@ -2,21 +2,32 @@ import { Level } from "../store";
 
 const level: Level = {
   ship: {
-      row: 1, col: 1, dir: "RIGHT"
+      row: 9, col: 1, dir: "RIGHT"
   },
-  functions: [2],
+  functions: [5],
   paints: { red: false, green: false, blue: false },
   cells: [
-      { row: 1, col: 1, color: "RED" },
-      { row: 1, col: 2, color: "GREEN" },
-      { row: 1, col: 3, color: "BLUE" },
-      { row: 1, col: 4, color: "RED" },
-      { row: 1, col: 5, color: "GREEN" },
-      { row: 1, col: 6, color: "BLUE" },
-      { row: 1, col: 7, color: "RED" },
+      { row: 9, col: 1, color: "RED" },
+      { row: 9, col: 2, color: "RED" },
+      { row: 8, col: 2, color: "RED" },
+      { row: 8, col: 3, color: "RED" },
+      { row: 7, col: 3, color: "RED" },
+      { row: 7, col: 4, color: "RED" },
+      { row: 6, col: 4, color: "RED" },
+      { row: 6, col: 5, color: "RED" },
+      { row: 5, col: 5, color: "RED" },
+      { row: 5, col: 6, color: "RED" },
+      { row: 4, col: 6, color: "RED" },
+      { row: 4, col: 7, color: "RED" },
+      { row: 3, col: 7, color: "RED" },
+      { row: 3, col: 8, color: "RED" },
+      { row: 2, col: 8, color: "RED" },
+      { row: 2, col: 9, color: "RED" },
+      { row: 1, col: 9, color: "RED" },
+      { row: 1, col: 10, color: "RED" },
   ],
   stars: [
-      { row: 1, col: 7 },
+      { row: 1, col: 10 },
   ]
 }
 export default level

@@ -98,7 +98,7 @@ const Game: Component = (props: ParentProps) => {
       clearInterval(timer())
       setTimer(null)
     } else if (state.game.running && timer() === null) {
-      const i = setInterval(tick, 1000)
+      const i = setInterval(tick, 500)
       setTimer(i)
     }
   })

@@ -1,4 +1,4 @@
-import { Component, createMemo, Show } from "solid-js"
+import { Component, createEffect, createMemo, Show } from "solid-js"
 import { Cell as ICell, Color, gameStore, makeEmptyCell } from "../store";
 import {useLevel} from "../context/Level";
 
@@ -44,7 +44,7 @@ const Cell: Component<CellProps> = (props: CellProps) => {
   const rotate = createMemo<string>(() => {
     if (!isShip()) return ""
 
-    const s = level().ship
+    const s = state.game.ship
     if (s.dir === "TOP") {
       return "-rotate-90"
     } else if (s.dir === "LEFT") {

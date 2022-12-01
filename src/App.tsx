@@ -7,6 +7,7 @@ import { gameStore } from "./store";
 import Functions from "./components/Functions";
 import Game from "./logic/Game";
 import Controls from "./components/Controls";
+import WonDialog from "./components/WonDialog";
 
 const App: Component = () => {
   const [state] = gameStore
@@ -31,6 +32,8 @@ const App: Component = () => {
             <Functions />
           </div>
         </div>
+
+        <WonDialog />
       </Game>
     </LevelProvider>
   );

@@ -107,7 +107,7 @@ export function calculateStack(setState: SetStoreFunction<GlobalStore>) {
   }))
 }
 
-const lvlIndex = 1
+const lvlIndex = 0
 const init: GlobalStore = {
   levels,
   currentLevelIndex: lvlIndex,
