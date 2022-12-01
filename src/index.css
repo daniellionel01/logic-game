@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.action-btn {
+  @apply aspect-square w-8 text-lg border-2 disabled:text-gray-500;
+}
+.action-row {
+  @apply flex;
+}
+
+.fn-block {
+  @apply aspect-square w-10 border-2 font-semibold flex justify-center items-center;
+}
