@@ -111,7 +111,7 @@ export function calculateStack(setState: SetStoreFunction<GlobalStore>) {
 
 export function loadLevel(index: number, setState: SetStoreFunction<GlobalStore>) {
   setState(produce(s => {
-    if (index >= s.levels.length-1) {
+    if (index >= s.levels.length) {
       return;
     }
 

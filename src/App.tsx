@@ -30,21 +30,23 @@ const App: Component = () => {
               <SelectLevelDialog />
             </div>
           </div>
-          <div class="mt-8">
-            <Grid />
-          </div>
           <div class="mt-8 flex space-x-2">
             <ExecutionStack />
             <Controls />
           </div>
-          <div class="mt-8 flex space-x-20">
-            <div class="space-y-2">
-              <h1 class="text-lg font-bold">Actions</h1>
-              <Actions />
+          <div class="mt-8 flex justify-between">
+            <div>
+              <Grid />
             </div>
-            <div class="space-y-2">
-              <h1 class="text-lg font-bold">Functions</h1>
-              <Functions />
+            <div class="mt-8 flex space-x-20">
+              <div class="space-y-2">
+                <h1 class="text-lg font-bold">Functions</h1>
+                <Functions />
+              </div>
+              <div class="space-y-2">
+                <h1 class="text-lg font-bold">Actions</h1>
+                <Actions />
+              </div>
             </div>
           </div>
         </div>
