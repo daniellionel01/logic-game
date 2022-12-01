@@ -9,6 +9,7 @@ import Game from "./logic/Game";
 import Controls from "./components/Controls";
 import WonDialog from "./components/WonDialog";
 import HelpDialog from "./components/HelpDialog";
+import SelectLevelDialog from "./components/SelectLevelDialog";
 
 const App: Component = () => {
   const [state] = gameStore
@@ -24,8 +25,9 @@ const App: Component = () => {
               <h1 class="text-4xl font-bold">Logic Game</h1>
               <h2 class="text-3xl font-semibold mt-3">Level {level()}</h2>
             </div>
-            <div>
+            <div class="flex space-x-4">
               <HelpDialog />
+              <SelectLevelDialog />
             </div>
           </div>
           <div class="mt-8">

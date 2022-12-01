@@ -5,7 +5,7 @@ const dialogID = "help-dialog"
 const HelpDialog: Component = () => {
   return (
     <div>
-      <label htmlFor={dialogID} className="btn btn-primary">help</label>
+      <label htmlFor={dialogID} class="btn btn-primary">help</label>
 
       <input type="checkbox" id={dialogID} class="modal-toggle" />
       <div class="modal cursor-pointer">
@@ -49,7 +49,7 @@ const HelpDialog: Component = () => {
           </div>
 
           <div class="modal-action">
-            <label htmlFor={dialogID} className="btn btn-primary">ok!</label>
+            <label htmlFor={dialogID} class="btn btn-primary">ok!</label>
           </div>
         </div>
       </div>
