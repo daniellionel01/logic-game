@@ -8,8 +8,8 @@ This repo is hosted on GitHub Pages at [https://daniellionel01.github.io/logic-g
 
 ## Functional Todos
 - [x] won / lost states
-- [ ] paint color instruction
 - [ ] help dialog
+- [ ] paint color instruction
 - [ ] select level
 - [ ] setup vercel
 - [ ] layout (align horizontally on bigger screens)

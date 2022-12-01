@@ -23,7 +23,7 @@ const WonDialog: Component = () => {
 
   return (
     <div>
-      <input type="checkbox" id="my-modal-4" class="modal-toggle" checked={won()} />
+      <input type="checkbox" id="won-dialog" class="modal-toggle" checked={won()} />
       <div class="modal cursor-pointer">
         <div class="modal-box relative">
           <h3 class="text-lg font-bold">Congratulations!</h3>
