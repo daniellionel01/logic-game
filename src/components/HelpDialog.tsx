@@ -11,7 +11,7 @@ const HelpDialog: Component = () => {
       <div class="modal cursor-pointer">
         <div class="modal-box relative">
           <h3 class="text-lg font-bold">How to play</h3>
-          <div class="mt-4 text-lg">
+          <div class="mt-4 text-lg space-y-2">
             <div class="flex space-x-4">
               <div>
                 <i class="fas fa-arrow-up"></i>
@@ -41,8 +41,8 @@ const HelpDialog: Component = () => {
               <div>execute instructions in f0</div>
             </div>
             <div class="flex space-x-4">
-              <div>
-                <i id="conditional-square" class="fas fa-arrow-up"></i>
+              <div class="w-6 h-6 aspect-square bg-red-500 text-white font-semibold flex justify-center items-center">
+                <i class="fas fa-arrow-up"></i>
               </div>
               <div>move forward <b>if</b> current square is red</div>
             </div>
