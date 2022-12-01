@@ -102,7 +102,8 @@ export function makeEmptyCell(row: number, col: number): Cell {
 
 export function calculateStack(setState: SetStoreFunction<GlobalStore>) {
   setState(produce(s => {
-    s.game.stack = [...s.game.functions[0]]
+    const ins = s.game.functions[0].filter(i => i.type !== InstructionType.PASS)
+    s.game.stack = [...ins]
   }))
 }
 

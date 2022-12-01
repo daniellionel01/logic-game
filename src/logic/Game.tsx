@@ -10,6 +10,8 @@ const Game: Component = (props: ParentProps) => {
 
   const tick = () => {
     setState(produce((s) => {
+      const nextInstruction = s.game.stack.pop()
+
       const ship = s.game.ship;
       s.game.ship = {
         ...ship,
