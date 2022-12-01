@@ -37,9 +37,15 @@ const App: Component = () => {
             <ExecutionStack />
             <Controls />
           </div>
-          <div class="mt-8 flex justify-between">
-            <Actions />
-            <Functions />
+          <div class="mt-8 flex space-x-20">
+            <div class="space-y-2">
+              <h1 class="text-lg font-bold">Actions</h1>
+              <Actions />
+            </div>
+            <div class="space-y-2">
+              <h1 class="text-lg font-bold">Functions</h1>
+              <Functions />
+            </div>
           </div>
         </div>
 

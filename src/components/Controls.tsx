@@ -28,7 +28,9 @@ const Controls: Component = () => {
       s.game.running = true
     }))
   }
-  const onStep = () => {}
+  const onStep = () => {
+    // TODO
+  }
   const onStop = () => {
     setState(produce(s => {
       s.game.running = false

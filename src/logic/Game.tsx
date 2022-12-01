@@ -3,11 +3,6 @@ import {produce} from "solid-js/store"
 import {useLevel} from "../context/Level"
 import {CallFnInstruction, gameStore, InstructionType, PaintColorInstruction} from "../store"
 
-const labels = {
-  [InstructionType.FORWARD]: "forward",
-  [InstructionType.CALL_FN]: "call fn",
-}
-
 const Game: Component = (props: ParentProps) => {
   const [state, setState] = gameStore
 

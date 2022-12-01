@@ -12,8 +12,8 @@ This repo is hosted on Vercel at [https://logic-game.vercel.app/](https://logic-
 - [x] help dialog
 - [x] select level
 - [x] paint color instruction
-- [ ] setup vercel
-- [ ] layout (align horizontally on bigger screens)
+- [x] setup vercel
+- [ ] step control button
 - [ ] limit execution stack
 
 ## Cleaner Code Todos
