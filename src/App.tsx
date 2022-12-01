@@ -19,7 +19,7 @@ const App: Component = () => {
   return (
     <LevelProvider>
       <Game>
-        <div class="container mx-auto mt-20">
+        <div class="container mx-auto my-20">
           <div class="flex justify-between">
             <div>
               <h1 class="text-4xl font-bold">Logic Game</h1>
