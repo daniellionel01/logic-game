@@ -23,38 +23,48 @@ const Functions: Component = () => {
 
   const onKeyup = (e: KeyboardEvent) => {
     const { game: { selectedInstruct: { fnIndex, instructIndex } } } = state
-    setState(produce(s => {
-      let nextFn = fnIndex
-      let nextIn = instructIndex
 
-      if (e.key === "ArrowDown") {
-        nextFn = increaseFnIndex(nextFn)
-      } else if (e.key === "ArrowUp") {
-        nextFn = decreaseFnIndex(nextFn)
-      } else if (e.key === "ArrowLeft") {
-        nextIn -= 1
-        if (nextIn < 0) {
-          nextFn = decreaseFnIndex(fnIndex)
-          nextIn = s.game.functions[nextFn].length - 1
-        }
-      } else if (e.key === "ArrowRight") {
-        nextIn += 1
-        if (nextIn >= s.game.functions[fnIndex].length) {
+    if (e.key.startsWith("Arrow")) {
+      setState(produce(s => {
+
+        let nextFn = fnIndex
+        let nextIn = instructIndex
+
+        if (fnIndex === -1) {
+          nextFn = 0
           nextIn = 0
-          nextFn = increaseFnIndex(fnIndex)
+        } else if (e.key === "ArrowDown") {
+          nextFn = increaseFnIndex(nextFn)
+        } else if (e.key === "ArrowUp") {
+          nextFn = decreaseFnIndex(nextFn)
+        } else if (e.key === "ArrowLeft") {
+          nextIn -= 1
+          if (nextIn < 0) {
+            nextFn = decreaseFnIndex(fnIndex)
+            nextIn = s.game.functions[nextFn].length - 1
+          }
+        } else if (e.key === "ArrowRight") {
+          nextIn += 1
+          if (nextIn >= s.game.functions[fnIndex].length) {
+            nextIn = 0
+            nextFn = increaseFnIndex(fnIndex)
+          }
         }
-      } else if (e.key === "Backspace") {
-        const instruction = s.game.functions[nextFn][nextIn]
-        s.game.functions[nextFn][nextIn] = {
+
+        s.game.selectedInstruct = {
+          fnIndex: nextFn,
+          instructIndex: nextIn
+        }
+      }))
+    } else if (e.key === "Backspace") {
+      setState(produce(s => {
+        const { fnIndex, instructIndex } = s.game.selectedInstruct
+        const instruction = s.game.functions[fnIndex][instructIndex]
+        s.game.functions[fnIndex][instructIndex] = {
           ...instruction, type: InstructionType.PASS
         }
-      }
-
-      s.game.selectedInstruct = {
-        fnIndex: nextFn,
-        instructIndex: nextIn
-      }
-    }))
+      }))
+    }
   }
   onMount(() => {
     document.addEventListener("keyup", onKeyup)

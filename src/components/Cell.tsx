@@ -63,7 +63,7 @@ const Cell: Component<CellProps> = (props: CellProps) => {
 
   return (
     <div
-      class={`w-14 flex justify-center items-center rounded-2xl aspect-square text-xl ${bg()} ${rotate()} ${color()}`}
+      class={`w-10 lg:w-14 flex justify-center items-center rounded-2xl aspect-square text-md lg:text-xl ${bg()} ${rotate()} ${color()}`}
       style="box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.08), 0 0 20px 0 rgba(0, 0, 0, 0.05);"
     >
       <Show when={isStar()}>

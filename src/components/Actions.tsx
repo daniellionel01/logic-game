@@ -1,4 +1,4 @@
-import {Component, createMemo, For} from "solid-js";
+import {Component, createEffect, createMemo, For} from "solid-js";
 import {produce} from "solid-js/store";
 import {useLevel} from "../context/Level";
 import {calculateStack, Color, gameStore, InstructionType} from "../store";
@@ -40,9 +40,9 @@ const Actions: Component = () => {
   }
 
   return (
-    <div>
+    <div class="bg-white drop-shadow-2xl border-2">
       <div class="action-row">
-        <button class="h-8 w-full border-2 text-lg" onClick={() => setCurrentInstruction(InstructionType.PASS)}>
+        <button class="h-8 w-full text-lg border-b-2" onClick={() => setCurrentInstruction(InstructionType.PASS)}>
           <i class="fas fa-eraser"></i>
         </button>
       </div>
@@ -96,13 +96,13 @@ const Actions: Component = () => {
         </button>
       </div>
       <div class="action-row">
-        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.COND_COLOR, undefined, undefined, "RED")}>
+        <button class="action-btn border-2" onClick={() => setCurrentInstruction(InstructionType.COND_COLOR, undefined, undefined, "RED")}>
           <InstructionSymbol type={InstructionType.COND_COLOR} condColor="RED" />
         </button>
-        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.COND_COLOR, undefined, undefined, "BLUE")}>
+        <button class="action-btn border-2" onClick={() => setCurrentInstruction(InstructionType.COND_COLOR, undefined, undefined, "BLUE")}>
           <InstructionSymbol type={InstructionType.COND_COLOR} condColor="BLUE" />
         </button>
-        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.COND_COLOR, undefined, undefined, "GREEN")}>
+        <button class="action-btn border-2" onClick={() => setCurrentInstruction(InstructionType.COND_COLOR, undefined, undefined, "GREEN")}>
           <InstructionSymbol type={InstructionType.COND_COLOR} condColor="GREEN" />
         </button>
       </div>
