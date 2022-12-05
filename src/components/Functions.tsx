@@ -26,10 +26,14 @@ const Functions: Component = () => {
 
     if (e.key.startsWith("Arrow")) {
       setState(produce(s => {
+
         let nextFn = fnIndex
         let nextIn = instructIndex
 
-        if (e.key === "ArrowDown") {
+        if (fnIndex === -1) {
+          nextFn = 0
+          nextIn = 0
+        } else if (e.key === "ArrowDown") {
           nextFn = increaseFnIndex(nextFn)
         } else if (e.key === "ArrowUp") {
           nextFn = decreaseFnIndex(nextFn)

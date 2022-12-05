@@ -1,6 +1,7 @@
-import {Component, createMemo} from "solid-js";
+import {Component, createEffect, createMemo, Show} from "solid-js";
 import {produce} from "solid-js/store";
 import {gameStore, Instruction} from "../store";
+import Actions from "./Actions";
 import InstructionSymbol from "./InstructionSymbol";
 
 interface FnInstructionProps {
@@ -14,9 +15,15 @@ const FnInstruction: Component<FnInstructionProps> = (props: FnInstructionProps)
 
   const [state, setState] = gameStore
 
-  const selectInstruction = () => {
+  const toggleInstruction = () => {
     setState(produce(s => {
-      s.game.selectedInstruct = { fnIndex: fni, instructIndex: ini }
+      const { game: { selectedInstruct: { fnIndex, instructIndex } } } = s
+
+      if (fni === fnIndex && ini === instructIndex) {
+        s.game.selectedInstruct = { fnIndex: -1, instructIndex: -1 }
+      } else {
+        s.game.selectedInstruct = { fnIndex: fni, instructIndex: ini }
+      }
     }))
   }
 
@@ -32,14 +39,20 @@ const FnInstruction: Component<FnInstructionProps> = (props: FnInstructionProps)
         "border-gray-600": isSelected(),
         "border-gray-300": !isSelected()
       }}
-      onClick={selectInstruction}
     >
-      <InstructionSymbol
-        type={instruction.type}
-        condColor={instruction.condColor}
-        fnIndex={instruction["fnIndex"]}
-        paintColor={instruction["paintColor"]}
-      />
+      <div onClick={toggleInstruction}>
+        <InstructionSymbol
+          type={instruction.type}
+          condColor={instruction.condColor}
+          fnIndex={instruction["fnIndex"]}
+          paintColor={instruction["paintColor"]}
+        />
+      </div>
+      <Show when={isSelected()}>
+        <div class="absolute bottom-10 right-10">
+          <Actions />
+        </div>
+      </Show>
     </div>
   )
 }

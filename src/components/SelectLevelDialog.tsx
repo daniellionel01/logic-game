@@ -12,7 +12,7 @@ const SelectLevelDialog: Component = () => {
 
   return (
     <div>
-      <label htmlFor={dialogID} class="btn btn-accent">select level</label>
+      <label htmlFor={dialogID} class="btn btn-accent w-full">select level</label>
 
       <input type="checkbox" id={dialogID} class="modal-toggle" />
       <div class="modal cursor-pointer">

@@ -47,7 +47,7 @@ const Game: Component = (props: ParentProps) => {
   })
 
   return (
-    <div>
+    <div class="w-screen">
       {props.children}
     </div>
   )

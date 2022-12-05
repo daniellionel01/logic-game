@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .action-btn {
-  @apply aspect-square w-8 text-lg border-2 disabled:text-gray-500;
+  @apply aspect-square w-8 text-lg disabled:text-gray-500;
 }
 .action-row {
   @apply flex;
@@ -11,4 +11,11 @@
 
 .fn-block {
   @apply aspect-square w-10 border-2 font-semibold flex justify-center items-center;
+}
+
+html, body, #root, :root {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
 }
