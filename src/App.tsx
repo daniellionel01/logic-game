@@ -37,7 +37,7 @@ const App: Component = () => {
             <div class="overflow-auto">
               <Grid />
             </div>
-            <div class="flex pb-8 lg:pb-0 px-8 lg:space-x-20">
+            <div class="flex pb-8 lg:pb-0 px-2 lg:px-8 lg:space-x-20">
               <div class="space-y-2">
                 <h1 class="text-lg font-bold">Functions</h1>
                 <Functions />
