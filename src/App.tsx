@@ -34,7 +34,7 @@ const App: Component = () => {
             <Controls />
           </div>
           <div class="mt-8 block lg:flex justify-between">
-            <div>
+            <div class="overflow-scroll">
               <Grid />
             </div>
             <div class="flex space-x-20 mt-8 lg:mt-0">

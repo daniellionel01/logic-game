@@ -1,5 +1,6 @@
 import {Component, createEffect, createMemo, Show} from "solid-js";
 import {produce} from "solid-js/store";
+import {Portal} from "solid-js/web";
 import {gameStore, Instruction} from "../store";
 import Actions from "./Actions";
 import InstructionSymbol from "./InstructionSymbol";
@@ -49,9 +50,11 @@ const FnInstruction: Component<FnInstructionProps> = (props: FnInstructionProps)
         />
       </button>
       <Show when={isSelected()}>
-        <div class="absolute bottom-10 right-10">
-          <Actions />
-        </div>
+        <Portal mount={document.body}>
+          <div class="fixed bottom-10 right-10">
+            <Actions />
+          </div>
+        </Portal>
       </Show>
     </div>
   )
