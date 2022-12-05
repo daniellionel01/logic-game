@@ -23,12 +23,18 @@ This repo is hosted on Vercel at [https://logic-game.vercel.app/](https://logic-
 - [ ] compare positions (star / cell / ship) utility
 
 ## Extra Todos
+- [ ] use q/w/e/... to select action and
+      enter to confirm current selected instruction
+- [ ] backspace to delete selected instruction
+- [ ] make empty instruction width 3
+- [ ] make actions a tooltip of selected instruction
 - [ ] clear local storage button
 - [ ] incr / decr game clock
 - [ ] better function input (dnd, move to the right immediately)
 - [ ] function input shortcut (digits, shift+digit -> moves to the next one)
 - [ ] better function cell color toggle
 - [ ] prettier ui
+- [ ] save and show completed levels
 
 ## Techstack
 - TypeScript
