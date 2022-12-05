@@ -1,6 +1,6 @@
 import {Component, For, onCleanup, onMount} from "solid-js";
 import {produce} from "solid-js/store";
-import { gameStore } from "../store";
+import { gameStore, InstructionType } from "../store";
 import FnInstruction from "./FnInstruction";
 
 const Functions: Component = () => {
@@ -42,6 +42,11 @@ const Functions: Component = () => {
         if (nextIn >= s.game.functions[fnIndex].length) {
           nextIn = 0
           nextFn = increaseFnIndex(fnIndex)
+        }
+      } else if (e.key === "Backspace") {
+        const instruction = s.game.functions[nextFn][nextIn]
+        s.game.functions[nextFn][nextIn] = {
+          ...instruction, type: InstructionType.PASS
         }
       }
 

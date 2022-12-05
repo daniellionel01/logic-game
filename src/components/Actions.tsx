@@ -42,8 +42,8 @@ const Actions: Component = () => {
   return (
     <div>
       <div class="action-row">
-        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.PASS)}>
-          <InstructionSymbol type={InstructionType.PASS} />
+        <button class="h-8 w-full border-2 text-lg" onClick={() => setCurrentInstruction(InstructionType.PASS)}>
+          <i class="fas fa-eraser"></i>
         </button>
       </div>
       <div class="action-row">
