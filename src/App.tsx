@@ -18,7 +18,7 @@ const App: Component = () => {
   return (
     <LevelProvider>
       <Game>
-        <div class="w-full my-10 md:my-20 mx-10 md:px-20">
+        <div class="w-full my-20 md:my-20 mx-10 md:px-20">
           <div class="flex justify-between">
             <div class="w-full">
               <h1 class="text-4xl font-bold">Logic Game</h1>

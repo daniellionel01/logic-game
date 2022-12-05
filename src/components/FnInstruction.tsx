@@ -40,14 +40,14 @@ const FnInstruction: Component<FnInstructionProps> = (props: FnInstructionProps)
         "border-gray-300": !isSelected()
       }}
     >
-      <div onClick={toggleInstruction}>
+      <button onClick={toggleInstruction} class="w-full h-full">
         <InstructionSymbol
           type={instruction.type}
           condColor={instruction.condColor}
           fnIndex={instruction["fnIndex"]}
           paintColor={instruction["paintColor"]}
         />
-      </div>
+      </button>
       <Show when={isSelected()}>
         <div class="absolute bottom-10 right-10">
           <Actions />
