@@ -102,14 +102,16 @@ export function makeEmptyCell(row: number, col: number): Cell {
   return { row, col, color: "NONE" }
 }
 
-export function calculateStack(setState: SetStoreFunction<GlobalStore>) {
+type SetState = SetStoreFunction<GlobalStore>
+
+export function calculateStack(setState: SetState) {
   setState(produce(s => {
     const ins = s.game.functions[0].filter(i => i.type !== InstructionType.PASS)
     s.game.stack = [...ins]
   }))
 }
 
-export function loadLevel(index: number, setState: SetStoreFunction<GlobalStore>) {
+export function loadLevel(index: number, setState: SetState) {
   setState(produce(s => {
     if (index >= s.levels.length) {
       return;
@@ -118,6 +120,67 @@ export function loadLevel(index: number, setState: SetStoreFunction<GlobalStore>
     const lvl = s.levels[index]
     s.game = getInitialGameState(lvl)
     s.currentLevelIndex = index
+  }))
+}
+
+export function tick(setState: SetState) {
+  setState(produce((s) => {
+    s.game.step += 1
+
+    const ship = s.game.ship;
+
+    const nextInstruction = { ...s.game.stack[0] }
+    s.game.stack.splice(0, 1)
+
+    if (!!nextInstruction.condColor && nextInstruction.condColor !== "NONE") {
+      const cell = s.game.cells.find(c => c.row === ship.row && c.col === ship.col)
+      if (cell && cell.color !== nextInstruction.condColor) {
+        return;
+      }
+    }
+
+    if (nextInstruction.type === InstructionType.FORWARD) {
+      if (ship.dir === "TOP") {
+        s.game.ship = { ...ship, row: ship.row-1 }
+      } else if (ship.dir === "BOTTOM") {
+        s.game.ship = { ...ship, row: ship.row+1 }
+      } else if (ship.dir === "LEFT") {
+        s.game.ship = { ...ship, col: ship.col-1 }
+      } else if (ship.dir === "RIGHT") {
+        s.game.ship = { ...ship, col: ship.col+1 }
+      }
+    } else if (nextInstruction.type === InstructionType.ROT_L) {
+      if (ship.dir === "RIGHT") {
+        s.game.ship = { ...ship, dir: "TOP" }
+      } else if (ship.dir === "BOTTOM") {
+        s.game.ship = { ...ship, dir: "RIGHT" }
+      } else if (ship.dir === "LEFT") {
+        s.game.ship = { ...ship, dir: "BOTTOM" }
+      } else if (ship.dir === "TOP") {
+        s.game.ship = { ...ship, dir: "LEFT" }
+      }
+    } else if (nextInstruction.type === InstructionType.ROT_R) {
+      if (ship.dir === "RIGHT") {
+        s.game.ship = { ...ship, dir: "BOTTOM" }
+      } else if (ship.dir === "BOTTOM") {
+        s.game.ship = { ...ship, dir: "LEFT" }
+      } else if (ship.dir === "LEFT") {
+        s.game.ship = { ...ship, dir: "TOP" }
+      } else if (ship.dir === "TOP") {
+        s.game.ship = { ...ship, dir: "RIGHT" }
+      }
+    } else if (nextInstruction.type === InstructionType.CALL_FN) {
+      const fnIns = nextInstruction as CallFnInstruction
+      const instructions = s.game.functions[fnIns.fnIndex].filter(s => s.type !== InstructionType.PASS)
+      s.game.stack.unshift(...instructions)
+    } else if (nextInstruction.type === InstructionType.PAINT_COLOR) {
+      const colorIns = nextInstruction as PaintColorInstruction
+
+      const cell = s.game.cells.find(c => c.row === ship.row && c.col === ship.col)
+      if (!cell) return;
+      const index = s.game.cells.indexOf(cell)
+      s.game.cells[index].color = colorIns.paintColor
+    }
   }))
 }
 

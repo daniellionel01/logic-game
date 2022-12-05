@@ -1,7 +1,7 @@
 import {Component, createEffect, createMemo} from "solid-js";
 import {produce} from "solid-js/store";
 import {useLevel} from "../context/Level";
-import {calculateStack, gameStore, InstructionType} from "../store";
+import {calculateStack, gameStore, InstructionType, tick} from "../store";
 
 const Controls: Component = () => {
   const [state, setState] = gameStore
@@ -29,7 +29,7 @@ const Controls: Component = () => {
     }))
   }
   const onStep = () => {
-    // TODO
+    tick(setState)
   }
   const onStop = () => {
     setState(produce(s => {

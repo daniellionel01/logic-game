@@ -13,7 +13,7 @@ This repo is hosted on Vercel at [https://logic-game.vercel.app/](https://logic-
 - [x] select level
 - [x] paint color instruction
 - [x] setup vercel
-- [ ] step control button
+- [x] step control button
 - [ ] limit execution stack
 
 ## Cleaner Code Todos
@@ -25,11 +25,11 @@ This repo is hosted on Vercel at [https://logic-game.vercel.app/](https://logic-
 ## Extra Todos
 - [ ] use q/w/e/... to select action and
       enter to confirm current selected instruction
-- [ ] backspace to delete selected instruction
-- [ ] make empty instruction width 3
+- [x] backspace to delete selected instruction
+- [x] make empty instruction width 3
 - [ ] make actions a tooltip of selected instruction
 - [ ] clear local storage button
-- [ ] incr / decr game clock
+- [x] incr / decr game clock
 - [ ] better function input (dnd, move to the right immediately)
 - [ ] function input shortcut (digits, shift+digit -> moves to the next one)
 - [ ] better function cell color toggle
