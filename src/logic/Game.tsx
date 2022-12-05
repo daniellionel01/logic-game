@@ -3,7 +3,7 @@ import {produce} from "solid-js/store"
 import {useLevel} from "../context/Level"
 import {gameStore, tick} from "../store"
 
-const Game: Component = (props: ParentProps) => {
+const Game: Component<ParentProps> = (props: ParentProps) => {
   const [state, setState] = gameStore
 
   const { level, won, lost } = useLevel()
