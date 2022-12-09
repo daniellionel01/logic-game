@@ -38,6 +38,7 @@ const Controls: Component = () => {
 
       s.game.ship = { ...level().ship }
       s.game.starsCollected = []
+      s.game.cells = [...level().cells.map(c => ({...c}))]
     }))
     calculateStack(setState)
   }

@@ -87,7 +87,7 @@ export function getInitialGameState(level: Level): GameState {
     ship: { ...level.ship },
     starsCollected: [],
     functions,
-    cells: [...level.cells],
+    cells: [...level.cells.map(c => ({...c}))],
     stack: [],
     selectedInstruct: {
       fnIndex: 0,
@@ -179,7 +179,10 @@ export function tick(setState: SetState) {
       const cell = s.game.cells.find(c => c.row === ship.row && c.col === ship.col)
       if (!cell) return;
       const index = s.game.cells.indexOf(cell)
-      s.game.cells[index].color = colorIns.paintColor
+      s.game.cells[index] = {
+        ...cell,
+        color: colorIns.paintColor
+      }
     }
   }))
 }
