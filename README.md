@@ -15,3 +15,5 @@ This repo is hosted on Vercel at [https://logic-game.vercel.app/](https://logic-
 
 ## Third Party Licenses
 - Font Awesome: https://fontawesome.com/license (no changes were made to the icons)
+
+[LICENSE](./LICENSE.md)
