@@ -9,7 +9,7 @@ const Actions: Component = () => {
   const { level } = useLevel()
 
   const [state, setState] = gameStore
-
+  
   const fnRows = createMemo(() => {
     const n = Math.ceil(level().functions.length / 3)
     return makeArray(n)
@@ -42,18 +42,18 @@ const Actions: Component = () => {
   return (
     <div class="bg-white drop-shadow-2xl border-2">
       <div class="action-row">
-        <button class="h-8 w-full text-lg border-b-2" onClick={() => setCurrentInstruction(InstructionType.PASS)}>
+        <button class="h-8 w-full text-lg border-b-2" onClick={() => setCurrentInstruction(InstructionType.PASS)} disabled={state.game.step > 0}>
           <i class="fas fa-eraser"></i>
         </button>
       </div>
       <div class="action-row">
-        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.ROT_L)}>
+        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.ROT_L)} disabled={state.game.step > 0}>
           <InstructionSymbol type={InstructionType.ROT_L} />
         </button>
-        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.FORWARD)}>
+        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.FORWARD)} disabled={state.game.step > 0}>
           <InstructionSymbol type={InstructionType.FORWARD} />
         </button>
-        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.ROT_R)}>
+        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.ROT_R)} disabled={state.game.step > 0}>
           <InstructionSymbol type={InstructionType.ROT_R} />
         </button>
       </div>
@@ -62,21 +62,21 @@ const Actions: Component = () => {
           <div>
             <button
               class="action-btn"
-              disabled={i*3+1 > level().functions.length}
+              disabled={i*3+1 > level().functions.length || state.game.step > 0}
               onClick={() => setCurrentInstruction(InstructionType.CALL_FN, i*3)}
             >
               <InstructionSymbol type={InstructionType.CALL_FN} fnIndex={i*3} />
             </button>
             <button
               class="action-btn"
-              disabled={i*3+2 > level().functions.length}
+              disabled={i*3+2 > level().functions.length || state.game.step > 0}
               onClick={() => setCurrentInstruction(InstructionType.CALL_FN, i*3+1)}
             >
               <InstructionSymbol type={InstructionType.CALL_FN} fnIndex={i*3+1} />
             </button>
             <button
               class="action-btn"
-              disabled={i*3+3 > level().functions.length}
+              disabled={i*3+3 > level().functions.length || state.game.step > 0}
               onClick={() => setCurrentInstruction(InstructionType.CALL_FN, i*3+2)}
             >
               <InstructionSymbol type={InstructionType.CALL_FN} fnIndex={i*3+2} />
@@ -85,24 +85,24 @@ const Actions: Component = () => {
         )}
       </For>
       <div class="action-row">
-        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.PAINT_COLOR, undefined, "RED")}>
+        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.PAINT_COLOR, undefined, "RED")} disabled={state.game.step > 0}>
           <InstructionSymbol type={InstructionType.PAINT_COLOR} paintColor="RED" />
         </button>
-        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.PAINT_COLOR, undefined, "BLUE")}>
+        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.PAINT_COLOR, undefined, "BLUE")} disabled={state.game.step > 0}>
           <InstructionSymbol type={InstructionType.PAINT_COLOR} paintColor="BLUE" />
         </button>
-        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.PAINT_COLOR, undefined, "GREEN")}>
+        <button class="action-btn" onClick={() => setCurrentInstruction(InstructionType.PAINT_COLOR, undefined, "GREEN")} disabled={state.game.step > 0}>
           <InstructionSymbol type={InstructionType.PAINT_COLOR} paintColor="GREEN" />
         </button>
       </div>
       <div class="action-row">
-        <button class="action-btn border-2" onClick={() => setCurrentInstruction(InstructionType.COND_COLOR, undefined, undefined, "RED")}>
+        <button class="action-btn border-2" onClick={() => setCurrentInstruction(InstructionType.COND_COLOR, undefined, undefined, "RED")} disabled={state.game.step > 0}>
           <InstructionSymbol type={InstructionType.COND_COLOR} condColor="RED" />
         </button>
-        <button class="action-btn border-2" onClick={() => setCurrentInstruction(InstructionType.COND_COLOR, undefined, undefined, "BLUE")}>
+        <button class="action-btn border-2" onClick={() => setCurrentInstruction(InstructionType.COND_COLOR, undefined, undefined, "BLUE")} disabled={state.game.step > 0}>
           <InstructionSymbol type={InstructionType.COND_COLOR} condColor="BLUE" />
         </button>
-        <button class="action-btn border-2" onClick={() => setCurrentInstruction(InstructionType.COND_COLOR, undefined, undefined, "GREEN")}>
+        <button class="action-btn border-2" onClick={() => setCurrentInstruction(InstructionType.COND_COLOR, undefined, undefined, "GREEN")} disabled={state.game.step > 0}>
           <InstructionSymbol type={InstructionType.COND_COLOR} condColor="GREEN" />
         </button>
       </div>
