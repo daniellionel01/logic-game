@@ -1,19 +1,17 @@
 # Logic Game
 
 Based on the second logic game that you have to play if you register for the coding camp at [42heilbronn](https://www.42heilbronn.de).
-My time ran out on a level so I decided to program this game myself and keep working on the level.
+My time ran out on a level so I decided to program this game myself and keep trying to solve the level.
 
-The files, and parts of this readme file, are based on the [vite vue-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-vue-ts) template.
+The first version was developed with Vue in 2022. The last commit of that version was this one:
+https://github.com/daniellionel01/logic-game/commit/b5d972668bfa8e3b55fd568bb283cfc70a63ca84
 
-This repo is hosted on Vercel at [https://logic-game.vercel.app/](https://logic-game.vercel.app/)
+## Development
 
-## Techstack
-- TypeScript
-- Vite
-- SolidJS
-- TailwindCSS w/ DaisyUI
+```sh
+# Run the tests
+gleam test
 
-## Third Party Licenses
-- Font Awesome: https://fontawesome.com/license (no changes were made to the icons)
-
-[LICENSE](./LICENSE.md)
+# Run the dev web server
+gleam run -m lustre/dev start
+```
