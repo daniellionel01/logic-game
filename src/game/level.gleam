@@ -297,9 +297,7 @@ pub fn cells_to_string(
   let Size(rows:, columns:) = size(cells)
   list.repeat(".", times: rows * columns)
   |> list.index_map(fn(_, index) {
-    let row = { index / columns } + 1
-    let column = { index % columns } + 1
-    let current_position = Position(row:, column:)
+    let current_position = position.from_index(index, columns)
 
     let cell =
       list.find(cells, fn(cell) {

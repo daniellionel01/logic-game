@@ -30,3 +30,9 @@ pub fn to_string(position: Position) -> String {
   <> int.to_string(position.column)
   <> ")"
 }
+
+pub fn from_index(index: Int, columns: Int) -> Position {
+  let row = { index / columns } + 1
+  let column = { index % columns } + 1
+  Position(row:, column:)
+}

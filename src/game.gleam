@@ -1,5 +1,7 @@
 import game/level
+import game/level/color
 import game/level/seed
+import game/position
 import game/runtime
 import gleam/int
 import gleam/list
@@ -34,8 +36,6 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
 }
 
 fn view(model: Model) -> element.Element(Message) {
-  let size = level.size(runtime.cells(model.runtime))
-
   html.div([attribute.class("p-20 bg-gray-100 w-screen h-screen")], [
     html.header([attribute.class("flex justify-between items-end")], [
       html.h1([attribute.class("font-bold text-2xl")], [
@@ -51,25 +51,52 @@ fn view(model: Model) -> element.Element(Message) {
       ]),
     ]),
     html.hr([attribute.class("my-4")]),
-    html.main(
-      [
-        attribute.class("grid gap-1"),
-        attribute.styles([
-          #(
-            "grid-template-columns",
-            "repeat(" <> int.to_string(size.columns) <> ", var(--cell-size))",
-          ),
-        ]),
-      ],
-      list.repeat(cell(), size.columns * size.rows),
-    ),
+    html.main([], [grid(model.runtime)]),
   ])
 }
 
-fn cell() {
+fn grid(runtime: runtime.Runtime) {
+  let size = level.size(runtime.cells(runtime))
+
+  let cells =
+    list.repeat(0, times: size.columns * size.rows)
+    |> list.index_map(fn(_, index) { position.from_index(index, size.columns) })
+    |> list.map(cell(runtime, _))
+
   html.div(
     [
-      attribute.class("bg-white rounded-2xl flex justify-center items-center"),
+      attribute.class("grid gap-1"),
+      attribute.styles([
+        #(
+          "grid-template-columns",
+          "repeat(" <> int.to_string(size.columns) <> ", var(--cell-size))",
+        ),
+      ]),
+    ],
+    cells,
+  )
+}
+
+fn cell(runtime: runtime.Runtime, position: position.Position) {
+  let cell =
+    list.find(runtime.cells(runtime), fn(cell) {
+      position.equal(cell.position, position)
+    })
+
+  let background_color = case cell {
+    Error(_) -> "bg-white"
+    Ok(cell) ->
+      case cell.color {
+        color.Red -> "bg-red-400"
+        color.Blue -> "bg-blue-400"
+        color.Green -> "bg-green-400"
+      }
+  }
+
+  html.div(
+    [
+      attribute.class("rounded-2xl flex justify-center items-center"),
+      attribute.classes([#(background_color, True)]),
       attribute.styles([
         #("width", "var(--cell-size)"),
         #("height", "var(--cell-size)"),
