@@ -1,9 +1,14 @@
 import birdie
 import game/level
 import game/level/direction
+import game/level/seed
 import game/position.{Position}
 import gleam/list
 import gleam/string
+
+fn input_output_content(input: String, output: String) -> String {
+  "------ INPUT\n" <> input <> "\n\n------ OUTPUT\n" <> output
+}
 
 fn trim_empty_borders_content(input: String) -> String {
   let input = string.trim(input)
@@ -16,7 +21,7 @@ fn trim_empty_borders_content(input: String) -> String {
     |> list.map(string.join(_, ""))
     |> string.join("\n")
 
-  "------ INPUT\n\n" <> input <> "\n\n------ OUTPUT\n\n" <> output
+  "------ INPUT\n" <> input <> "\n------ OUTPUT\n" <> output
 }
 
 pub fn trim_empty_borders_one_border_test() {
@@ -234,4 +239,12 @@ f1=2
         ],
       ),
     )
+}
+
+pub fn parses_level_1_correctly_test() {
+  let assert Ok(level) = level.parse(seed.level_1)
+  let output = level.to_string(level)
+
+  input_output_content(string.trim(seed.level_1), string.trim(output))
+  |> birdie.snap(title: "level 1 parses correctly")
 }

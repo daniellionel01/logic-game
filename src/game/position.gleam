@@ -17,6 +17,10 @@ pub fn compare(a: Position, b: Position) -> order.Order {
   }
 }
 
+pub fn equal(a: Position, b: Position) -> Bool {
+  a.row == b.row && a.column == b.column
+}
+
 /// This creates a string with the format #(row, column)
 ///
 pub fn to_string(position: Position) -> String {

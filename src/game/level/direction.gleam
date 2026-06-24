@@ -21,6 +21,15 @@ pub fn decoder() -> decode.Decoder(Direction) {
   }
 }
 
+pub fn to_string(direction: Direction) -> String {
+  case direction {
+    North -> "^"
+    East -> ">"
+    South -> "v"
+    West -> "<"
+  }
+}
+
 pub fn rotate_clockwise(direction: Direction) -> Direction {
   case direction {
     North -> East

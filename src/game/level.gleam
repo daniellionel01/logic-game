@@ -5,6 +5,7 @@ import gleam/dynamic/decode
 import gleam/int
 import gleam/list
 import gleam/order
+import gleam/result
 import gleam/string
 
 pub type Color {
@@ -20,6 +21,14 @@ fn color_decoder() -> decode.Decoder(Color) {
     "blue" | "b" | "B" -> decode.success(Blue)
     "green" | "g" | "G" -> decode.success(Green)
     _ -> decode.failure(Red, "Color")
+  }
+}
+
+fn color_to_string(color: Color) -> String {
+  case color {
+    Red -> "r"
+    Blue -> "b"
+    Green -> "g"
   }
 }
 
@@ -279,19 +288,23 @@ pub fn do_parse_functions(
   grid: String,
   functions: List(FunctionSpec),
 ) -> #(List(FunctionSpec), String) {
-  let assert Ok(#(line, rest)) = string.split_once(grid, on: "\n")
-  let line = string.trim(line)
-  case line {
-    "f" <> line -> {
-      let assert Ok(#(id, size)) = string.split_once(line, on: "=")
-      let assert Ok(size) = int.parse(size)
-      let assert Ok(id) = int.parse(id)
-      let id = FunctionId(id)
-      let function = FunctionSpec(id, size)
+  case string.split_once(grid, on: "\n") {
+    Ok(#(line, rest)) -> {
+      let line = string.trim(line)
+      case line {
+        "f" <> line -> {
+          let assert Ok(#(id, size)) = string.split_once(line, on: "=")
+          let assert Ok(size) = int.parse(size)
+          let assert Ok(id) = int.parse(id)
+          let id = FunctionId(id)
+          let function = FunctionSpec(id, size)
 
-      do_parse_functions(rest, [function, ..functions])
+          do_parse_functions(rest, [function, ..functions])
+        }
+        _ -> #(functions, grid)
+      }
     }
-    _ -> #(functions, grid)
+    Error(_) -> #(functions, grid)
   }
 }
 
@@ -340,5 +353,54 @@ fn do_trim_right(lines: List(List(String))) -> List(List(String)) {
 }
 
 pub fn to_string(level: Level) -> String {
-  todo
+  let assert Ok(cell) =
+    list.find(level.cells, fn(cell) {
+      position.equal(cell.position, level.player_start.position)
+    })
+
+  let player_cell_color = color_to_string(cell.color)
+
+  let functions =
+    level.functions
+    |> list.map(fn(function) {
+      let FunctionSpec(id: FunctionId(id), instructions:) = function
+      "f" <> int.to_string(id) <> "=" <> int.to_string(instructions)
+    })
+    |> string.join(with: "\n")
+
+  let cells =
+    level.cells
+    |> list.chunk(fn(cell) { cell.position.row })
+    |> list.map(fn(row) {
+      row
+      |> list.map(fn(cell) {
+        let is_player =
+          position.equal(cell.position, level.player_start.position)
+
+        case is_player {
+          True -> {
+            direction.to_string(level.player_start.direction)
+          }
+          False -> {
+            let is_star =
+              level.stars
+              |> list.find(fn(star) {
+                position.equal(star.position, cell.position)
+              })
+              |> result.is_ok
+
+            let color = color_to_string(cell.color)
+            case is_star {
+              True -> string.uppercase(color)
+              // This is not required, but makes the logic more explicit
+              False -> string.lowercase(color)
+            }
+          }
+        }
+      })
+      |> string.join(with: "")
+    })
+    |> string.join(with: "\n")
+
+  "P=" <> player_cell_color <> "\n" <> functions <> "\n" <> cells
 }

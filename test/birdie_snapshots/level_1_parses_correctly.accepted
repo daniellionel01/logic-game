@@ -1,0 +1,15 @@
+---
+version: 2.0.1
+title: level 1 parses correctly
+file: ./test/game_test/level_test.gleam
+test_name: parses_level_1_correctly_test
+---
+------ INPUT
+P=r
+f0=3
+>gbrgbR
+
+------ OUTPUT
+P=r
+f0=3
+>gbrgbR
