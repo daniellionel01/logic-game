@@ -89,6 +89,23 @@ pub fn level_3_won_state_to_string_test() {
   |> birdie.snap(title: "runtime with solution for level 3 wins")
 }
 
+pub fn level_3_still_running_state_test() {
+  let assert Ok(level) = level.parse(seed.level_3)
+  let runtime =
+    runtime.init(level)
+    |> runtime.fill_program_slots(0, [
+      program.slot(program.always(program.Forward)),
+      program.slot(program.when_on(color.Red, program.RotateRight)),
+      program.slot(program.when_on(color.Red, program.Forward)),
+      program.slot(program.always(program.RotateLeft)),
+      program.slot(program.always(program.Call(0))),
+    ])
+    |> runtime.advance_multiple_times(50)
+
+  assert !runtime.is_lost(runtime)
+  assert !runtime.is_won(runtime)
+}
+
 pub fn level_3_won_state_test() {
   let assert Ok(level) = level.parse(seed.level_3)
   let runtime =
@@ -104,4 +121,23 @@ pub fn level_3_won_state_test() {
 
   assert !runtime.is_lost(runtime)
   assert runtime.is_won(runtime)
+}
+
+pub fn level_3_lost_state_test() {
+  let assert Ok(level) = level.parse(seed.level_3)
+  let runtime =
+    runtime.init(level)
+    |> runtime.fill_program_slots(0, [
+      // We modified the program instructions so the player
+      // will eventually run out of bounds.
+      program.slot(program.always(program.Forward)),
+      program.slot(program.always(program.RotateRight)),
+      program.slot(program.always(program.Forward)),
+      program.slot(program.always(program.RotateLeft)),
+      program.slot(program.always(program.Call(0))),
+    ])
+    |> runtime.advance_multiple_times(29)
+
+  assert runtime.is_lost(runtime)
+  assert !runtime.is_won(runtime)
 }
