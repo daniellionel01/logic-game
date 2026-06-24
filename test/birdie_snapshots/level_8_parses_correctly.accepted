@@ -6,8 +6,8 @@ test_name: parses_level_8_correctly_test
 ---
 ------ INPUT
 P=r
-f0=5
-f1=5
+f=5
+f=5
 .B..B....B...
 .r..r....r.B.
 .rB.r..B.r.r.
@@ -26,8 +26,8 @@ rrrrrrrrrrrrr
 
 ------ OUTPUT
 P=r
-f0=5
-f1=5
+f=5
+f=5
 .B..B....B...
 .r..r....r.B.
 .rB.r..B.r.r.

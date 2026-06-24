@@ -6,7 +6,7 @@ test_name: parses_level_2_correctly_test
 ---
 ------ INPUT
 P=r
-f0=5
+f=5
 ........rR
 .......rr.
 ......rr..
@@ -19,7 +19,7 @@ f0=5
 
 ------ OUTPUT
 P=r
-f0=5
+f=5
 ........rR
 .......rr.
 ......rr..

@@ -1,3 +1,4 @@
+import game/level/color
 import game/level/direction.{type Direction}
 import game/position.{type Position, Position}
 import gleam/dynamic
@@ -8,32 +9,8 @@ import gleam/order
 import gleam/result
 import gleam/string
 
-pub type Color {
-  Red
-  Blue
-  Green
-}
-
-fn color_decoder() -> decode.Decoder(Color) {
-  use variant <- decode.then(decode.string)
-  case variant {
-    "red" | "r" | "R" -> decode.success(Red)
-    "blue" | "b" | "B" -> decode.success(Blue)
-    "green" | "g" | "G" -> decode.success(Green)
-    _ -> decode.failure(Red, "Color")
-  }
-}
-
-fn color_to_string(color: Color) -> String {
-  case color {
-    Red -> "r"
-    Blue -> "b"
-    Green -> "g"
-  }
-}
-
 pub type Cell {
-  Cell(position: Position, color: Color)
+  Cell(position: Position, color: color.Color)
 }
 
 pub type Player {
@@ -44,42 +21,12 @@ pub type Star {
   Star(position: Position)
 }
 
-pub type FunctionId {
-  FunctionId(Int)
-}
-
-pub type Condition {
-  Always
-  WhenOn(Color)
-}
-
-pub type Action {
-  Forward
-  RotateRight
-  RotateLeft
-  Call(FunctionId)
-  Fill(Color)
-}
-
-pub type Instruction {
-  Instruction(action: Action, condition: Condition)
-}
-
-pub type Slot {
-  EmptySlot
-  Filled(Instruction)
-}
-
-pub type FunctionSpec {
-  FunctionSpec(id: FunctionId, instructions: Int)
-}
-
 pub type Level {
   Level(
     player_start: Player,
     cells: List(Cell),
     stars: List(Star),
-    functions: List(FunctionSpec),
+    functions: List(Int),
   )
 }
 
@@ -96,9 +43,9 @@ pub fn empty() {
   )
 }
 
-pub fn size(level: Level) -> Size {
+pub fn size(cells: List(Cell)) -> Size {
   let assert Ok(cell_largest_row) =
-    level.cells
+    cells
     |> list.sort(
       by: order.reverse(fn(a: Cell, b: Cell) {
         int.compare(a.position.row, b.position.row)
@@ -106,7 +53,7 @@ pub fn size(level: Level) -> Size {
     )
     |> list.first
   let assert Ok(cell_largest_col) =
-    level.cells
+    cells
     |> list.sort(
       by: order.reverse(fn(a: Cell, b: Cell) {
         int.compare(a.position.column, b.position.column)
@@ -215,7 +162,7 @@ pub fn parse(grid: String) -> Result(Level, String) {
             let direction =
               decode.run(dynamic.string(string), direction.decoder())
             let player_cell_color =
-              decode.run(dynamic.string(player_cell_color), color_decoder())
+              decode.run(dynamic.string(player_cell_color), color.decoder())
 
             case direction, player_cell_color {
               Ok(direction), Ok(player_cell_color) -> {
@@ -228,7 +175,7 @@ pub fn parse(grid: String) -> Result(Level, String) {
             }
           }
           "r" | "g" | "b" -> {
-            let color = decode.run(dynamic.string(string), color_decoder())
+            let color = decode.run(dynamic.string(string), color.decoder())
             case color {
               Ok(color) -> {
                 let cell = Cell(position:, color:)
@@ -239,7 +186,7 @@ pub fn parse(grid: String) -> Result(Level, String) {
             }
           }
           "R" | "G" | "B" -> {
-            let color = decode.run(dynamic.string(string), color_decoder())
+            let color = decode.run(dynamic.string(string), color.decoder())
             case color {
               Ok(color) -> {
                 let cell = Cell(position:, color:)
@@ -262,12 +209,7 @@ pub fn parse(grid: String) -> Result(Level, String) {
   // in an ascending manner to make testing easier.
   //
   let Level(player_start:, cells:, stars:, functions:) = level
-  let functions =
-    list.sort(functions, fn(a, b) {
-      let FunctionId(id_a) = a.id
-      let FunctionId(id_b) = b.id
-      int.compare(id_a, id_b)
-    })
+  let functions = list.reverse(functions)
   let stars =
     list.sort(stars, fn(a, b) { position.compare(a.position, b.position) })
   let cells =
@@ -286,20 +228,15 @@ pub fn is_level_char(char: String) -> Bool {
 
 pub fn do_parse_functions(
   grid: String,
-  functions: List(FunctionSpec),
-) -> #(List(FunctionSpec), String) {
+  functions: List(Int),
+) -> #(List(Int), String) {
   case string.split_once(grid, on: "\n") {
     Ok(#(line, rest)) -> {
       let line = string.trim(line)
       case line {
-        "f" <> line -> {
-          let assert Ok(#(id, size)) = string.split_once(line, on: "=")
+        "f=" <> size -> {
           let assert Ok(size) = int.parse(size)
-          let assert Ok(id) = int.parse(id)
-          let id = FunctionId(id)
-          let function = FunctionSpec(id, size)
-
-          do_parse_functions(rest, [function, ..functions])
+          do_parse_functions(rest, [size, ..functions])
         }
         _ -> #(functions, grid)
       }
@@ -352,66 +289,69 @@ fn do_trim_empty_border_right(lines: List(List(String))) -> List(List(String)) {
   |> list.map(list.reverse)
 }
 
+pub fn cells_to_string(
+  cells: List(Cell),
+  stars: List(Star),
+  player: Player,
+) -> String {
+  let Size(rows:, columns:) = size(cells)
+  list.repeat(".", times: rows * columns)
+  |> list.index_map(fn(_, index) {
+    let row = { index / columns } + 1
+    let column = { index % columns } + 1
+    let current_position = Position(row:, column:)
+
+    let cell =
+      list.find(cells, fn(cell) {
+        position.equal(cell.position, current_position)
+      })
+    case cell {
+      Ok(cell) -> {
+        let is_player = position.equal(cell.position, player.position)
+
+        case is_player {
+          True -> {
+            direction.to_string(player.direction)
+          }
+          False -> {
+            let is_star =
+              stars
+              |> list.find(fn(star) {
+                position.equal(star.position, cell.position)
+              })
+              |> result.is_ok
+
+            let color = color.to_string(cell.color)
+            case is_star {
+              True -> string.uppercase(color)
+              // This is not required, but makes the logic more explicit
+              False -> string.lowercase(color)
+            }
+          }
+        }
+      }
+      Error(_) -> "."
+    }
+  })
+  |> list.sized_chunk(into: columns)
+  |> list.map(string.join(_, with: ""))
+  |> string.join(with: "\n")
+}
+
 pub fn to_string(level: Level) -> String {
   let assert Ok(cell) =
     list.find(level.cells, fn(cell) {
       position.equal(cell.position, level.player_start.position)
     })
 
-  let player_cell_color = color_to_string(cell.color)
+  let player_cell_color = color.to_string(cell.color)
 
   let functions =
     level.functions
-    |> list.map(fn(function) {
-      let FunctionSpec(id: FunctionId(id), instructions:) = function
-      "f" <> int.to_string(id) <> "=" <> int.to_string(instructions)
-    })
+    |> list.map(fn(instructions) { "f=" <> int.to_string(instructions) })
     |> string.join(with: "\n")
 
-  let Size(rows:, columns:) = size(level)
-  let cells =
-    list.repeat(".", times: rows * columns)
-    |> list.index_map(fn(_, index) {
-      let row = { index / columns } + 1
-      let column = { index % columns } + 1
-      let current_position = Position(row:, column:)
-
-      let cell =
-        list.find(level.cells, fn(cell) {
-          position.equal(cell.position, current_position)
-        })
-      case cell {
-        Ok(cell) -> {
-          let is_player =
-            position.equal(cell.position, level.player_start.position)
-
-          case is_player {
-            True -> {
-              direction.to_string(level.player_start.direction)
-            }
-            False -> {
-              let is_star =
-                level.stars
-                |> list.find(fn(star) {
-                  position.equal(star.position, cell.position)
-                })
-                |> result.is_ok
-
-              let color = color_to_string(cell.color)
-              case is_star {
-                True -> string.uppercase(color)
-                // This is not required, but makes the logic more explicit
-                False -> string.lowercase(color)
-              }
-            }
-          }
-        }
-        Error(_) -> "."
-      }
-    })
-    |> list.sized_chunk(into: columns)
-    |> list.map(string.join(_, with: ""))
-    |> string.join(with: "\n")
+  let cells = cells_to_string(level.cells, level.stars, level.player_start)
 
   "P=" <> player_cell_color <> "\n" <> functions <> "\n" <> cells
 }

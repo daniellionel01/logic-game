@@ -6,10 +6,10 @@ test_name: parses_level_1_correctly_test
 ---
 ------ INPUT
 P=r
-f0=3
+f=3
 >gbrgbR
 
 ------ OUTPUT
 P=r
-f0=3
+f=3
 >gbrgbR

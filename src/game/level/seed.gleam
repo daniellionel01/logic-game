@@ -1,12 +1,12 @@
 pub const level_1 = "
 P=r
-f0=3
+f=3
 >gbrgbR
 "
 
 pub const level_2 = "
 P=r
-f0=5
+f=5
 ........rR
 .......rr.
 ......rr..
@@ -20,7 +20,7 @@ f0=5
 
 pub const level_3 = "
 P=r
-f0=5
+f=5
 >r........rR
 .rr......rr.
 ..rr....rr..
@@ -31,7 +31,7 @@ f0=5
 
 pub const level_4 = "
 P=b
-f0=5
+f=5
 B.....
 bb....
 .bb...
@@ -48,7 +48,7 @@ bb....
 
 pub const level_5 = "
 P=b
-f0=6
+f=6
 .....>.....
 .....g.....
 .....g.....
@@ -59,7 +59,7 @@ BggggrggggB
 
 pub const level_6 = "
 P=g
-f0=6
+f=6
 G............
 gg...........
 .gg..........
@@ -71,8 +71,8 @@ gg...........
 
 pub const level_7 = "
 P=g
-f0=4
-f1=2
+f=4
+f=2
 ..R..
 ..r..
 Rr^rR
@@ -82,8 +82,8 @@ Rr^rR
 
 pub const level_8 = "
 P=r
-f0=5
-f1=5
+f=5
+f=5
 .B..B....B...
 .r..r....r.B.
 .rB.r..B.r.r.

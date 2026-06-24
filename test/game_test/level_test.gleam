@@ -1,14 +1,12 @@
 import birdie
+import game/birdiex
 import game/level
+import game/level/color
 import game/level/direction
 import game/level/seed
 import game/position.{Position}
 import gleam/list
 import gleam/string
-
-fn input_output_content(input: String, output: String) -> String {
-  "------ INPUT\n" <> input <> "\n\n------ OUTPUT\n" <> output
-}
 
 fn trim_empty_borders_content(input: String) -> String {
   let input = string.trim(input)
@@ -114,39 +112,39 @@ pub fn trim_empty_borders_test() {
 }
 
 pub fn level_size_test() {
-  assert level.Level(..level.empty(), cells: [
-      level.Cell(Position(row: 1, column: 1), level.Red),
-      level.Cell(Position(row: 1, column: 2), level.Green),
-      level.Cell(Position(row: 1, column: 3), level.Blue),
-      level.Cell(Position(row: 1, column: 4), level.Red),
-      level.Cell(Position(row: 1, column: 5), level.Green),
-      level.Cell(Position(row: 1, column: 6), level.Blue),
-      level.Cell(Position(row: 1, column: 7), level.Red),
-    ])
+  assert [
+      level.Cell(Position(row: 1, column: 1), color.Red),
+      level.Cell(Position(row: 1, column: 2), color.Green),
+      level.Cell(Position(row: 1, column: 3), color.Blue),
+      level.Cell(Position(row: 1, column: 4), color.Red),
+      level.Cell(Position(row: 1, column: 5), color.Green),
+      level.Cell(Position(row: 1, column: 6), color.Blue),
+      level.Cell(Position(row: 1, column: 7), color.Red),
+    ]
     |> level.size()
     == level.Size(rows: 1, columns: 7)
 
-  assert level.Level(..level.empty(), cells: [
-      level.Cell(Position(row: 1, column: 1), level.Red),
-      level.Cell(Position(row: 1, column: 2), level.Green),
-      level.Cell(Position(row: 1, column: 3), level.Blue),
-      level.Cell(Position(row: 2, column: 3), level.Red),
-      level.Cell(Position(row: 2, column: 4), level.Green),
-      level.Cell(Position(row: 2, column: 5), level.Blue),
-      level.Cell(Position(row: 2, column: 6), level.Red),
-    ])
+  assert [
+      level.Cell(Position(row: 1, column: 1), color.Red),
+      level.Cell(Position(row: 1, column: 2), color.Green),
+      level.Cell(Position(row: 1, column: 3), color.Blue),
+      level.Cell(Position(row: 2, column: 3), color.Red),
+      level.Cell(Position(row: 2, column: 4), color.Green),
+      level.Cell(Position(row: 2, column: 5), color.Blue),
+      level.Cell(Position(row: 2, column: 6), color.Red),
+    ]
     |> level.size()
     == level.Size(rows: 2, columns: 6)
 
-  assert level.Level(..level.empty(), cells: [
-      level.Cell(Position(row: 2, column: 1), level.Red),
-      level.Cell(Position(row: 2, column: 2), level.Green),
-      level.Cell(Position(row: 2, column: 3), level.Blue),
-      level.Cell(Position(row: 1, column: 3), level.Red),
-      level.Cell(Position(row: 1, column: 4), level.Green),
-      level.Cell(Position(row: 1, column: 5), level.Blue),
-      level.Cell(Position(row: 1, column: 6), level.Red),
-    ])
+  assert [
+      level.Cell(Position(row: 2, column: 1), color.Red),
+      level.Cell(Position(row: 2, column: 2), color.Green),
+      level.Cell(Position(row: 2, column: 3), color.Blue),
+      level.Cell(Position(row: 1, column: 3), color.Red),
+      level.Cell(Position(row: 1, column: 4), color.Green),
+      level.Cell(Position(row: 1, column: 5), color.Blue),
+      level.Cell(Position(row: 1, column: 6), color.Red),
+    ]
     |> level.size()
     == level.Size(rows: 2, columns: 6)
 }
@@ -156,7 +154,7 @@ pub fn parse_level_simple_test() {
     level.parse(
       "
 P=r
-f0=3
+f=3
 .........
 .>gbrgbR.
 .........
@@ -168,16 +166,16 @@ f0=3
       level.Level(
         player_start: level.Player(Position(1, 1), direction.East),
         cells: [
-          level.Cell(Position(row: 1, column: 1), level.Red),
-          level.Cell(Position(row: 1, column: 2), level.Green),
-          level.Cell(Position(row: 1, column: 3), level.Blue),
-          level.Cell(Position(row: 1, column: 4), level.Red),
-          level.Cell(Position(row: 1, column: 5), level.Green),
-          level.Cell(Position(row: 1, column: 6), level.Blue),
-          level.Cell(Position(row: 1, column: 7), level.Red),
+          level.Cell(Position(row: 1, column: 1), color.Red),
+          level.Cell(Position(row: 1, column: 2), color.Green),
+          level.Cell(Position(row: 1, column: 3), color.Blue),
+          level.Cell(Position(row: 1, column: 4), color.Red),
+          level.Cell(Position(row: 1, column: 5), color.Green),
+          level.Cell(Position(row: 1, column: 6), color.Blue),
+          level.Cell(Position(row: 1, column: 7), color.Red),
         ],
         stars: [level.Star(Position(row: 1, column: 7))],
-        functions: [level.FunctionSpec(level.FunctionId(0), 3)],
+        functions: [3],
       ),
     )
 }
@@ -187,8 +185,8 @@ pub fn parse_level_two_rows_test() {
     level.parse(
       "
 P=r
-f0=3
-f1=2
+f=3
+f=2
 ..............
 .>r........rR.
 ..rr......rr..
@@ -204,39 +202,36 @@ f1=2
       level.Level(
         player_start: level.Player(Position(1, 1), direction.East),
         cells: [
-          level.Cell(Position(row: 1, column: 1), level.Red),
-          level.Cell(Position(row: 1, column: 2), level.Red),
-          level.Cell(Position(row: 1, column: 11), level.Red),
-          level.Cell(Position(row: 1, column: 12), level.Red),
+          level.Cell(Position(row: 1, column: 1), color.Red),
+          level.Cell(Position(row: 1, column: 2), color.Red),
+          level.Cell(Position(row: 1, column: 11), color.Red),
+          level.Cell(Position(row: 1, column: 12), color.Red),
 
-          level.Cell(Position(row: 2, column: 2), level.Red),
-          level.Cell(Position(row: 2, column: 3), level.Red),
-          level.Cell(Position(row: 2, column: 10), level.Red),
-          level.Cell(Position(row: 2, column: 11), level.Red),
+          level.Cell(Position(row: 2, column: 2), color.Red),
+          level.Cell(Position(row: 2, column: 3), color.Red),
+          level.Cell(Position(row: 2, column: 10), color.Red),
+          level.Cell(Position(row: 2, column: 11), color.Red),
 
-          level.Cell(Position(row: 3, column: 3), level.Red),
-          level.Cell(Position(row: 3, column: 4), level.Red),
-          level.Cell(Position(row: 3, column: 9), level.Red),
-          level.Cell(Position(row: 3, column: 10), level.Red),
+          level.Cell(Position(row: 3, column: 3), color.Red),
+          level.Cell(Position(row: 3, column: 4), color.Red),
+          level.Cell(Position(row: 3, column: 9), color.Red),
+          level.Cell(Position(row: 3, column: 10), color.Red),
 
-          level.Cell(Position(row: 4, column: 4), level.Red),
-          level.Cell(Position(row: 4, column: 5), level.Red),
-          level.Cell(Position(row: 4, column: 8), level.Red),
-          level.Cell(Position(row: 4, column: 9), level.Red),
+          level.Cell(Position(row: 4, column: 4), color.Red),
+          level.Cell(Position(row: 4, column: 5), color.Red),
+          level.Cell(Position(row: 4, column: 8), color.Red),
+          level.Cell(Position(row: 4, column: 9), color.Red),
 
-          level.Cell(Position(row: 5, column: 5), level.Red),
-          level.Cell(Position(row: 5, column: 6), level.Red),
-          level.Cell(Position(row: 5, column: 7), level.Red),
-          level.Cell(Position(row: 5, column: 8), level.Red),
+          level.Cell(Position(row: 5, column: 5), color.Red),
+          level.Cell(Position(row: 5, column: 6), color.Red),
+          level.Cell(Position(row: 5, column: 7), color.Red),
+          level.Cell(Position(row: 5, column: 8), color.Red),
 
-          level.Cell(Position(row: 6, column: 6), level.Blue),
-          level.Cell(Position(row: 6, column: 7), level.Blue),
+          level.Cell(Position(row: 6, column: 6), color.Blue),
+          level.Cell(Position(row: 6, column: 7), color.Blue),
         ],
         stars: [level.Star(Position(row: 1, column: 12))],
-        functions: [
-          level.FunctionSpec(level.FunctionId(0), 3),
-          level.FunctionSpec(level.FunctionId(1), 2),
-        ],
+        functions: [3, 2],
       ),
     )
 }
@@ -285,7 +280,7 @@ pub fn parses_level_1_correctly_test() {
   let assert Ok(level) = level.parse(seed.level_1)
   let output = level.to_string(level)
 
-  input_output_content(string.trim(seed.level_1), string.trim(output))
+  birdiex.input_output_content(string.trim(seed.level_1), string.trim(output))
   |> birdie.snap(title: "level 1 parses correctly")
 }
 
@@ -293,7 +288,7 @@ pub fn parses_level_2_correctly_test() {
   let assert Ok(level) = level.parse(seed.level_2)
   let output = level.to_string(level)
 
-  input_output_content(string.trim(seed.level_2), string.trim(output))
+  birdiex.input_output_content(string.trim(seed.level_2), string.trim(output))
   |> birdie.snap(title: "level 2 parses correctly")
 }
 
@@ -301,7 +296,7 @@ pub fn parses_level_3_correctly_test() {
   let assert Ok(level) = level.parse(seed.level_3)
   let output = level.to_string(level)
 
-  input_output_content(string.trim(seed.level_3), string.trim(output))
+  birdiex.input_output_content(string.trim(seed.level_3), string.trim(output))
   |> birdie.snap(title: "level 3 parses correctly")
 }
 
@@ -309,7 +304,7 @@ pub fn parses_level_4_correctly_test() {
   let assert Ok(level) = level.parse(seed.level_4)
   let output = level.to_string(level)
 
-  input_output_content(string.trim(seed.level_4), string.trim(output))
+  birdiex.input_output_content(string.trim(seed.level_4), string.trim(output))
   |> birdie.snap(title: "level 4 parses correctly")
 }
 
@@ -317,7 +312,7 @@ pub fn parses_level_5_correctly_test() {
   let assert Ok(level) = level.parse(seed.level_5)
   let output = level.to_string(level)
 
-  input_output_content(string.trim(seed.level_5), string.trim(output))
+  birdiex.input_output_content(string.trim(seed.level_5), string.trim(output))
   |> birdie.snap(title: "level 5 parses correctly")
 }
 
@@ -325,7 +320,7 @@ pub fn parses_level_6_correctly_test() {
   let assert Ok(level) = level.parse(seed.level_6)
   let output = level.to_string(level)
 
-  input_output_content(string.trim(seed.level_6), string.trim(output))
+  birdiex.input_output_content(string.trim(seed.level_6), string.trim(output))
   |> birdie.snap(title: "level 6 parses correctly")
 }
 
@@ -333,7 +328,7 @@ pub fn parses_level_7_correctly_test() {
   let assert Ok(level) = level.parse(seed.level_7)
   let output = level.to_string(level)
 
-  input_output_content(string.trim(seed.level_7), string.trim(output))
+  birdiex.input_output_content(string.trim(seed.level_7), string.trim(output))
   |> birdie.snap(title: "level 7 parses correctly")
 }
 
@@ -341,6 +336,6 @@ pub fn parses_level_8_correctly_test() {
   let assert Ok(level) = level.parse(seed.level_8)
   let output = level.to_string(level)
 
-  input_output_content(string.trim(seed.level_8), string.trim(output))
+  birdiex.input_output_content(string.trim(seed.level_8), string.trim(output))
   |> birdie.snap(title: "level 8 parses correctly")
 }
