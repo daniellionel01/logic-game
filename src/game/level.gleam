@@ -323,11 +323,11 @@ pub fn trim_empty_borders(lines: List(List(String))) -> List(List(String)) {
   lines
   // This filters the top and bottom rows that are all empty characters
   |> list.filter(fn(line) { list.any(line, is_level_char) })
-  |> do_trim_left
-  |> do_trim_right
+  |> do_trim_empty_border_left
+  |> do_trim_empty_border_right
 }
 
-fn do_trim_left(lines: List(List(String))) -> List(List(String)) {
+fn do_trim_empty_border_left(lines: List(List(String))) -> List(List(String)) {
   let empty_column =
     list.all(lines, fn(line) {
       case list.first(line) {
@@ -340,15 +340,15 @@ fn do_trim_left(lines: List(List(String))) -> List(List(String)) {
     [_, ..], False -> lines
     [_, ..], True -> {
       let lines = list.map(lines, list.drop(_, 1))
-      do_trim_left(lines)
+      do_trim_empty_border_left(lines)
     }
   }
 }
 
-fn do_trim_right(lines: List(List(String))) -> List(List(String)) {
+fn do_trim_empty_border_right(lines: List(List(String))) -> List(List(String)) {
   lines
   |> list.map(list.reverse)
-  |> do_trim_left
+  |> do_trim_empty_border_left
   |> list.map(list.reverse)
 }
 
