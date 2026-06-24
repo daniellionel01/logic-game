@@ -1,0 +1,13 @@
+---
+version: 2.0.1
+title: trims empty characters with no empty characters gives back same input
+file: ./test/game_test/runtime_test.gleam
+test_name: trim_empty_borders_without_empty_characters_test
+---
+------ INPUT
+
+>gbrgbR
+
+------ OUTPUT
+
+>gbrgbR
