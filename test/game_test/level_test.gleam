@@ -241,6 +241,46 @@ f1=2
     )
 }
 
+pub fn parsing_level_1_and_to_string_are_equal_test() {
+  let assert Ok(level) = level.parse(seed.level_1)
+  assert level.to_string(level) == string.trim(seed.level_1)
+}
+
+pub fn parsing_level_2_and_to_string_are_equal_test() {
+  let assert Ok(level) = level.parse(seed.level_2)
+  assert level.to_string(level) == string.trim(seed.level_2)
+}
+
+pub fn parsing_level_3_and_to_string_are_equal_test() {
+  let assert Ok(level) = level.parse(seed.level_3)
+  assert level.to_string(level) == string.trim(seed.level_3)
+}
+
+pub fn parsing_level_4_and_to_string_are_equal_test() {
+  let assert Ok(level) = level.parse(seed.level_4)
+  assert level.to_string(level) == string.trim(seed.level_4)
+}
+
+pub fn parsing_level_5_and_to_string_are_equal_test() {
+  let assert Ok(level) = level.parse(seed.level_5)
+  assert level.to_string(level) == string.trim(seed.level_5)
+}
+
+pub fn parsing_level_6_and_to_string_are_equal_test() {
+  let assert Ok(level) = level.parse(seed.level_6)
+  assert level.to_string(level) == string.trim(seed.level_6)
+}
+
+pub fn parsing_level_7_and_to_string_are_equal_test() {
+  let assert Ok(level) = level.parse(seed.level_7)
+  assert level.to_string(level) == string.trim(seed.level_7)
+}
+
+pub fn parsing_level_8_and_to_string_are_equal_test() {
+  let assert Ok(level) = level.parse(seed.level_8)
+  assert level.to_string(level) == string.trim(seed.level_8)
+}
+
 pub fn parses_level_1_correctly_test() {
   let assert Ok(level) = level.parse(seed.level_1)
   let output = level.to_string(level)
