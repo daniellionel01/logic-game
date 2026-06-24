@@ -30,7 +30,7 @@ pub fn to_string(direction: Direction) -> String {
   }
 }
 
-pub fn rotate_clockwise(direction: Direction) -> Direction {
+pub fn rotate_right(direction: Direction) -> Direction {
   case direction {
     North -> East
     East -> South
@@ -39,7 +39,7 @@ pub fn rotate_clockwise(direction: Direction) -> Direction {
   }
 }
 
-pub fn rotate_counter_clockwise(direction: Direction) -> Direction {
+pub fn rotate_left(direction: Direction) -> Direction {
   case direction {
     North -> West
     East -> North

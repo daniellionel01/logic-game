@@ -7,6 +7,8 @@
 
 import game/level
 import game/program
+import gleam/list
+import gleam/string
 
 /// This is the limit for how many instructions
 /// can be contained in the stack. Everything above
@@ -28,7 +30,7 @@ pub opaque type Runtime {
   )
 }
 
-pub fn init_runtime(level: level.Level) -> Runtime {
+pub fn init(level: level.Level) -> Runtime {
   Runtime(
     level:,
     cells: level.cells,
@@ -40,10 +42,23 @@ pub fn init_runtime(level: level.Level) -> Runtime {
   )
 }
 
-pub fn to_string(runtime: Runtime) -> String {
-  let program = todo
+pub fn fill_program_slots(
+  runtime: Runtime,
+  function: Int,
+  slots: List(program.Slot),
+) -> Runtime {
+  let program = program.fill_slots(runtime.program, function, slots)
+  Runtime(..runtime, program:)
+}
 
-  let stack = todo
+pub fn to_string(runtime: Runtime) -> String {
+  let program = program.to_string(runtime.program)
+
+  let stack =
+    runtime.stack
+    |> list.map(program.instruction_to_string)
+    |> string.join(with: ", ")
+  let stack = "STACK: [" <> stack <> "]"
 
   let cells =
     level.cells_to_string(
