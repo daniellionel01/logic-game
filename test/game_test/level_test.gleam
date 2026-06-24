@@ -248,3 +248,11 @@ pub fn parses_level_1_correctly_test() {
   input_output_content(string.trim(seed.level_1), string.trim(output))
   |> birdie.snap(title: "level 1 parses correctly")
 }
+
+pub fn parses_level_2_correctly_test() {
+  let assert Ok(level) = level.parse(seed.level_2)
+  let output = level.to_string(level)
+
+  input_output_content(string.trim(seed.level_2), string.trim(output))
+  |> birdie.snap(title: "level 2 parses correctly")
+}

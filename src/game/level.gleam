@@ -368,38 +368,49 @@ pub fn to_string(level: Level) -> String {
     })
     |> string.join(with: "\n")
 
+  let Size(rows:, columns:) = size(level)
   let cells =
-    level.cells
-    |> list.chunk(fn(cell) { cell.position.row })
-    |> list.map(fn(row) {
-      row
-      |> list.map(fn(cell) {
-        let is_player =
-          position.equal(cell.position, level.player_start.position)
+    list.repeat(".", times: rows * columns)
+    |> list.index_map(fn(_, index) {
+      let row = { index / columns } + 1
+      let column = { index % columns } + 1
+      let current_position = Position(row:, column:)
 
-        case is_player {
-          True -> {
-            direction.to_string(level.player_start.direction)
-          }
-          False -> {
-            let is_star =
-              level.stars
-              |> list.find(fn(star) {
-                position.equal(star.position, cell.position)
-              })
-              |> result.is_ok
+      let cell =
+        list.find(level.cells, fn(cell) {
+          position.equal(cell.position, current_position)
+        })
+      case cell {
+        Ok(cell) -> {
+          let is_player =
+            position.equal(cell.position, level.player_start.position)
 
-            let color = color_to_string(cell.color)
-            case is_star {
-              True -> string.uppercase(color)
-              // This is not required, but makes the logic more explicit
-              False -> string.lowercase(color)
+          case is_player {
+            True -> {
+              direction.to_string(level.player_start.direction)
+            }
+            False -> {
+              let is_star =
+                level.stars
+                |> list.find(fn(star) {
+                  position.equal(star.position, cell.position)
+                })
+                |> result.is_ok
+
+              let color = color_to_string(cell.color)
+              case is_star {
+                True -> string.uppercase(color)
+                // This is not required, but makes the logic more explicit
+                False -> string.lowercase(color)
+              }
             }
           }
         }
-      })
-      |> string.join(with: "")
+        Error(_) -> "."
+      }
     })
+    |> list.sized_chunk(into: columns)
+    |> list.map(string.join(_, with: ""))
     |> string.join(with: "\n")
 
   "P=" <> player_cell_color <> "\n" <> functions <> "\n" <> cells
