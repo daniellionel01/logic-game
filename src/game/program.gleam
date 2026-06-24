@@ -1,35 +1,41 @@
 import game/level
 import game/level/color
+import gleam/dict
 import gleam/int
 import gleam/list
 import gleam/string
 
+pub type Functions =
+  dict.Dict(Int, List(Slot))
+
 pub opaque type Program {
-  Program(functions: List(List(Slot)))
+  Program(functions: Functions)
 }
 
 pub fn init(level: level.Level) -> Program {
   let functions =
-    list.map(level.functions, fn(size) { list.repeat(EmptySlot, times: size) })
+    level.functions
+    |> list.index_map(fn(size, index) {
+      #(index, list.repeat(EmptySlot, times: size))
+    })
+    |> dict.from_list
   Program(functions)
 }
 
 pub fn fill_slots(
   program: Program,
-  function: Int,
+  function_index: Int,
   slots: List(Slot),
 ) -> Program {
-  let functions =
-    list.index_map(program.functions, fn(current, index) {
-      case index == function {
-        True -> slots
-        False -> current
-      }
-    })
+  let functions = dict.insert(program.functions, function_index, slots)
   Program(functions:)
 }
 
-pub opaque type Condition {
+pub fn get_functions(program: Program) -> Functions {
+  program.functions
+}
+
+pub type Condition {
   Always
   WhenOn(color.Color)
 }
@@ -42,7 +48,7 @@ pub type Action {
   Fill(color.Color)
 }
 
-pub opaque type Instruction {
+pub type Instruction {
   Instruction(action: Action, condition: Condition)
 }
 
@@ -65,6 +71,29 @@ pub fn empty_slot() {
 
 pub fn slot(instruction: Instruction) {
   Filled(instruction)
+}
+
+pub fn slots_to_instructions(slots: List(Slot)) -> List(Instruction) {
+  do_slots_to_instructions(slots, [])
+  |> list.reverse
+}
+
+fn do_slots_to_instructions(
+  slots: List(Slot),
+  instructions: List(Instruction),
+) -> List(Instruction) {
+  case slots {
+    [] -> instructions
+    [slot, ..rest] -> {
+      case slot {
+        EmptySlot -> do_slots_to_instructions(rest, instructions)
+        Filled(instruction) -> {
+          let instructions = [instruction, ..instructions]
+          do_slots_to_instructions(rest, instructions)
+        }
+      }
+    }
+  }
 }
 
 fn action_to_string(action: Action) -> String {
@@ -98,7 +127,9 @@ fn slot_to_string(slot: Slot) -> String {
 
 pub fn to_string(program: Program) -> String {
   program.functions
-  |> list.index_map(fn(slots, index) {
+  |> dict.to_list
+  |> list.map(fn(value) {
+    let #(index, slots) = value
     let slots =
       slots
       |> list.map(slot_to_string)

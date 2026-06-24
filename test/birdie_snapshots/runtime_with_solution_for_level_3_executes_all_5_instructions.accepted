@@ -1,0 +1,16 @@
+---
+version: 2.0.1
+title: runtime with solution for level 3 executes all 5 instructions
+file: ./test/game_test/runtime_test.gleam
+test_name: level_3_runtime_to_string_one_stack_pass_test
+---
+F0: [F, RR@r, F@r, RL, C(0)]
+
+STACK: [F, RR@r, F@r, RL, C(0)]
+
+rr........rR
+.>r......rr.
+..rr....rr..
+...rr..rr...
+....rrrr....
+.....bb.....

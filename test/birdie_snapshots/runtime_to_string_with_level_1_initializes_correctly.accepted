@@ -2,7 +2,7 @@
 version: 2.0.1
 title: runtime to string with level 1 initializes correctly
 file: ./test/game_test/runtime_test.gleam
-test_name: runtime_to_string_level_1_init_test
+test_name: level_1_runtime_to_string_init_test
 ---
 F0: [_, _, _]
 
