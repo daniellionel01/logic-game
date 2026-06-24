@@ -256,3 +256,51 @@ pub fn parses_level_2_correctly_test() {
   input_output_content(string.trim(seed.level_2), string.trim(output))
   |> birdie.snap(title: "level 2 parses correctly")
 }
+
+pub fn parses_level_3_correctly_test() {
+  let assert Ok(level) = level.parse(seed.level_3)
+  let output = level.to_string(level)
+
+  input_output_content(string.trim(seed.level_3), string.trim(output))
+  |> birdie.snap(title: "level 3 parses correctly")
+}
+
+pub fn parses_level_4_correctly_test() {
+  let assert Ok(level) = level.parse(seed.level_4)
+  let output = level.to_string(level)
+
+  input_output_content(string.trim(seed.level_4), string.trim(output))
+  |> birdie.snap(title: "level 4 parses correctly")
+}
+
+pub fn parses_level_5_correctly_test() {
+  let assert Ok(level) = level.parse(seed.level_5)
+  let output = level.to_string(level)
+
+  input_output_content(string.trim(seed.level_5), string.trim(output))
+  |> birdie.snap(title: "level 5 parses correctly")
+}
+
+pub fn parses_level_6_correctly_test() {
+  let assert Ok(level) = level.parse(seed.level_6)
+  let output = level.to_string(level)
+
+  input_output_content(string.trim(seed.level_6), string.trim(output))
+  |> birdie.snap(title: "level 6 parses correctly")
+}
+
+pub fn parses_level_7_correctly_test() {
+  let assert Ok(level) = level.parse(seed.level_7)
+  let output = level.to_string(level)
+
+  input_output_content(string.trim(seed.level_7), string.trim(output))
+  |> birdie.snap(title: "level 7 parses correctly")
+}
+
+pub fn parses_level_8_correctly_test() {
+  let assert Ok(level) = level.parse(seed.level_8)
+  let output = level.to_string(level)
+
+  input_output_content(string.trim(seed.level_8), string.trim(output))
+  |> birdie.snap(title: "level 8 parses correctly")
+}
