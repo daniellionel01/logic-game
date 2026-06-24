@@ -1,3 +1,6 @@
+import game/level
+import game/level/seed
+import game/runtime
 import gleam/int
 import gleam/list
 import lustre
@@ -14,13 +17,16 @@ pub fn main() -> Nil {
 }
 
 type Model {
-  Model(level: Int, rows: Int, cols: Int)
+  Model(level_number: Int, runtime: runtime.Runtime)
 }
 
 type Message
 
 fn init(_: Nil) -> #(Model, effect.Effect(b)) {
-  #(Model(level: 1, rows: 10, cols: 10), effect.none())
+  let assert Ok(level) = level.parse(seed.level_1)
+  let runtime = runtime.init(level)
+
+  #(Model(level_number: 1, runtime:), effect.none())
 }
 
 fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
@@ -28,10 +34,12 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
 }
 
 fn view(model: Model) -> element.Element(Message) {
+  let size = level.size(runtime.cells(model.runtime))
+
   html.div([attribute.class("p-20 bg-gray-100 w-screen h-screen")], [
     html.header([attribute.class("flex justify-between items-end")], [
       html.h1([attribute.class("font-bold text-2xl")], [
-        html.text("Level " <> int.to_string(model.level)),
+        html.text("Level " <> int.to_string(model.level_number)),
       ]),
       html.div([attribute.class("flex gap-4")], [
         html.button([attribute.class("cursor-pointer hover:underline")], [
@@ -49,11 +57,11 @@ fn view(model: Model) -> element.Element(Message) {
         attribute.styles([
           #(
             "grid-template-columns",
-            "repeat(" <> int.to_string(model.cols) <> ", var(--cell-size))",
+            "repeat(" <> int.to_string(size.columns) <> ", var(--cell-size))",
           ),
         ]),
       ],
-      list.repeat(cell(), model.cols * model.rows),
+      list.repeat(cell(), size.columns * size.rows),
     ),
   ])
 }

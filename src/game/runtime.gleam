@@ -48,6 +48,10 @@ pub fn reset(runtime: Runtime) -> Runtime {
   init(runtime.level)
 }
 
+pub fn cells(runtime: Runtime) {
+  runtime.cells
+}
+
 pub fn fill_program_slots(
   runtime: Runtime,
   function: Int,
