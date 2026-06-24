@@ -262,7 +262,7 @@ pub fn star() -> element.Element(a) {
       attribute("stroke-linecap", "round"),
       attribute("stroke-width", "2"),
       attribute("stroke", "currentColor"),
-      attribute("fill", "none"),
+      attribute("fill", "currentColor"),
       attribute("viewBox", "0 0 24 24"),
       attribute("height", "24"),
       attribute("width", "24"),

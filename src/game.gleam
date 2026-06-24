@@ -3,8 +3,10 @@ import game/level/color
 import game/level/seed
 import game/position
 import game/runtime
+import game/web/icon
 import gleam/int
 import gleam/list
+import gleam/result
 import lustre
 import lustre/attribute
 import lustre/effect
@@ -93,6 +95,15 @@ fn cell(runtime: runtime.Runtime, position: position.Position) {
       }
   }
 
+  let star =
+    list.find(runtime.remaining_stars(runtime), fn(star) {
+      position.equal(star.position, position)
+    })
+  let star = case star {
+    Error(_) -> element.fragment([])
+    Ok(_) -> html.div([attribute.class("text-white")], [icon.star()])
+  }
+
   html.div(
     [
       attribute.class("rounded-2xl flex justify-center items-center"),
@@ -106,6 +117,6 @@ fn cell(runtime: runtime.Runtime, position: position.Position) {
         ),
       ]),
     ],
-    [],
+    [star],
   )
 }

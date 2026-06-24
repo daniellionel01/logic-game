@@ -52,6 +52,10 @@ pub fn cells(runtime: Runtime) {
   runtime.cells
 }
 
+pub fn remaining_stars(runtime: Runtime) {
+  runtime.remaining_stars
+}
+
 pub fn fill_program_slots(
   runtime: Runtime,
   function: Int,
