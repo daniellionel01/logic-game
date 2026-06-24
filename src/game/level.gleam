@@ -121,8 +121,6 @@ pub type LevelParsingError {
   UnknownParsingError(String)
 }
 
-// TODO make the example level in this comment more realistic.
-//
 /// You can define a level with all cells, player starting position,
 /// stars and functions in a grid of characters.
 ///
@@ -144,13 +142,16 @@ pub type LevelParsingError {
 ///
 /// A full level could look like this:
 /// ```
-/// P=r
-/// f0=2
-/// f1=3
-/// .........
-/// .>gbrgbR.
-/// ..gbrgbR.
-/// .........
+/// P=g
+/// f0=4
+/// f1=2
+/// .......
+/// ...R...
+/// ...r...
+/// .Rr^rR.
+/// ...r...
+/// ...R...
+/// .......
 /// ```
 ///
 pub fn parse(grid: String) -> Result(Level, String) {
