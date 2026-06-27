@@ -1,5 +1,6 @@
 import game/level
 import game/level/color
+import game/level/direction
 import game/level/seed
 import game/position
 import game/runtime
@@ -109,7 +110,16 @@ fn cell(runtime: runtime.Runtime, position: position.Position) {
   let player = case position.equal(player.position, position) {
     False -> element.fragment([])
     True -> {
-      html.div([], [icon.train()])
+      let degrees = case player.direction {
+        direction.North -> 0
+        direction.East -> 90
+        direction.South -> 180
+        direction.West -> 270
+      }
+      let rotate = int.to_string(degrees)
+      html.div([attribute.class("text-white rotate-" <> rotate)], [
+        icon.player(),
+      ])
     }
   }
 
