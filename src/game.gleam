@@ -6,7 +6,6 @@ import game/runtime
 import game/web/icon
 import gleam/int
 import gleam/list
-import gleam/result
 import lustre
 import lustre/attribute
 import lustre/effect
@@ -43,7 +42,7 @@ fn view(model: Model) -> element.Element(Message) {
       html.h1([attribute.class("font-bold text-2xl")], [
         html.text("Level " <> int.to_string(model.level_number)),
       ]),
-      html.div([attribute.class("flex gap-4")], [
+      html.div([attribute.class("flex gap-8")], [
         html.button([attribute.class("cursor-pointer hover:underline")], [
           html.text("Help"),
         ]),
@@ -101,7 +100,17 @@ fn cell(runtime: runtime.Runtime, position: position.Position) {
     })
   let star = case star {
     Error(_) -> element.fragment([])
-    Ok(_) -> html.div([attribute.class("text-white")], [icon.star()])
+    Ok(_) -> {
+      html.div([attribute.class("text-white")], [icon.star()])
+    }
+  }
+
+  let player = runtime.player(runtime)
+  let player = case position.equal(player.position, position) {
+    False -> element.fragment([])
+    True -> {
+      html.div([], [icon.train()])
+    }
   }
 
   html.div(
@@ -117,6 +126,6 @@ fn cell(runtime: runtime.Runtime, position: position.Position) {
         ),
       ]),
     ],
-    [star],
+    [star, player],
   )
 }
