@@ -5,6 +5,7 @@
 - launch custom level with url query encoded data and download json / text file
 
 - modifiable execution speed
+- mobile layout
 
 - migrate to iv
 

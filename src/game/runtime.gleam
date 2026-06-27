@@ -56,6 +56,10 @@ pub fn remaining_stars(runtime: Runtime) {
   runtime.remaining_stars
 }
 
+pub fn player(runtime: Runtime) {
+  runtime.player
+}
+
 pub fn fill_program_slots(
   runtime: Runtime,
   function: Int,
@@ -141,9 +145,9 @@ pub fn advance(runtime: Runtime) -> Runtime {
       }
     }
     [instruction, ..rest] -> {
-      // We already remove the instruction from the stack
-      // so that the `Call` action does not accidentally
-      // keep the instruction, but can consider it already
+      // We remove the instruction from the stack so that
+      // the `Call` action does not accidentally keep the
+      // instruction, but can consider it already
       // discarded.
       //
       let runtime = Runtime(..runtime, stack: rest)
@@ -152,14 +156,14 @@ pub fn advance(runtime: Runtime) -> Runtime {
         program.Instruction(action:, condition: program.Always) -> {
           execute_action(runtime, action)
         }
-        program.Instruction(action:, condition: program.WhenOn(color)) -> {
+        program.Instruction(action:, condition: program.WhenOn(cond_color)) -> {
           let player_cell =
             list.find(runtime.cells, fn(cell) {
               position.equal(cell.position, runtime.player.position)
             })
           case player_cell {
             Ok(level.Cell(position: _, color: cell_color))
-              if color == cell_color
+              if cond_color == cell_color
             -> {
               execute_action(runtime, action)
             }

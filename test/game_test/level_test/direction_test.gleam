@@ -1,6 +1,6 @@
 import game/level/direction
 
-/// Rotating twice right should invert the direction
+/// Rotating to the right twice should invert the direction
 ///
 /// North -> South
 /// South -> North
@@ -33,7 +33,7 @@ pub fn rotate_twice_right_test() {
   assert dir == direction.West
 }
 
-/// Rotating twice counter right should invert the direction
+/// Rotating to the left twice should invert the direction
 ///
 /// North -> South
 /// South -> North
@@ -107,7 +107,7 @@ pub fn rotate_four_times_right_test() {
   assert dir == direction.West
 }
 
-/// Rotating four times counter right should yield the same direction
+/// Rotating four times left should yield the same direction
 ///
 /// North -> North
 /// South -> South
