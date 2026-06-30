@@ -52,6 +52,10 @@ pub fn cells(runtime: Runtime) {
   runtime.cells
 }
 
+pub fn stack(runtime: Runtime) {
+  runtime.stack
+}
+
 pub fn remaining_stars(runtime: Runtime) {
   runtime.remaining_stars
 }

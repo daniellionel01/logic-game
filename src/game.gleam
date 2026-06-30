@@ -3,6 +3,7 @@ import game/level/color
 import game/level/direction
 import game/level/seed
 import game/position
+import game/program
 import game/runtime
 import game/web/icon
 import gleam/int
@@ -52,8 +53,40 @@ fn view(model: Model) -> element.Element(Message) {
         ]),
       ]),
     ]),
-    html.hr([attribute.class("my-4")]),
-    html.main([], [grid(model.runtime)]),
+    html.hr([attribute.class("my-8")]),
+    html.main([attribute.class("space-y-8")], [
+      stack(model.runtime),
+      grid(model.runtime),
+    ]),
+  ])
+}
+
+fn stack(runtime: runtime.Runtime) {
+  let stack =
+    runtime.stack(runtime)
+    |> list.map(fn(instruction) {
+      let icon =
+        html.div([attribute.class("w-6 h-6")], [action_icon(instruction.action)])
+      let color_tag = case instruction {
+        program.Instruction(action: _, condition: program.WhenOn(color)) -> {
+          html.div(
+            [
+              attribute.class("w-full h-2 rounded-sm"),
+              attribute.classes([#(background_color_class(color), True)]),
+            ],
+            [],
+          )
+        }
+        program.Instruction(action: _, condition: program.Always) -> {
+          html.div([attribute.class("w-full h-2")], [])
+        }
+      }
+      html.div([attribute.class("p-1 space-y-1")], [icon, color_tag])
+    })
+
+  html.div([attribute.class("w-full border p-4 font-semibold space-y-4")], [
+    html.p([], [html.text("Execution Stack")]),
+    html.div([attribute.class("flex gap-4")], stack),
   ])
 }
 
@@ -79,6 +112,38 @@ fn grid(runtime: runtime.Runtime) {
   )
 }
 
+fn background_color_class(color: color.Color) -> String {
+  case color {
+    color.Red -> "bg-red-400"
+    color.Blue -> "bg-blue-400"
+    color.Green -> "bg-green-400"
+  }
+}
+
+fn foreground_color_class(color: color.Color) -> String {
+  case color {
+    color.Red -> "text-red-500"
+    color.Blue -> "text-blue-500"
+    color.Green -> "text-green-500"
+  }
+}
+
+fn action_icon(action: program.Action) -> element.Element(a) {
+  case action {
+    program.Forward -> icon.arrow_up()
+    program.RotateRight -> icon.rotate_cw()
+    program.RotateLeft -> icon.rotate_ccw()
+    program.Fill(color) ->
+      html.div([attribute.class(foreground_color_class(color))], [
+        icon.paint_roller(),
+      ])
+    program.Call(index) -> {
+      let index = int.to_string(index)
+      html.div([], [html.text("F" <> index)])
+    }
+  }
+}
+
 fn cell(runtime: runtime.Runtime, position: position.Position) {
   let cell =
     list.find(runtime.cells(runtime), fn(cell) {
@@ -87,12 +152,7 @@ fn cell(runtime: runtime.Runtime, position: position.Position) {
 
   let background_color = case cell {
     Error(_) -> "bg-white"
-    Ok(cell) ->
-      case cell.color {
-        color.Red -> "bg-red-400"
-        color.Blue -> "bg-blue-400"
-        color.Green -> "bg-green-400"
-      }
+    Ok(cell) -> background_color_class(cell.color)
   }
 
   let star =
@@ -116,10 +176,11 @@ fn cell(runtime: runtime.Runtime, position: position.Position) {
         direction.South -> 180
         direction.West -> 270
       }
-      let rotate = int.to_string(degrees)
-      html.div([attribute.class("text-white rotate-" <> rotate)], [
-        icon.player(),
-      ])
+      let rotate = int.to_string(degrees) <> "deg"
+      html.div(
+        [attribute.class("text-white"), attribute.style("rotate", rotate)],
+        [icon.player()],
+      )
     }
   }
 
