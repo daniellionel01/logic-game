@@ -1,6 +1,5 @@
 import lustre/attribute.{attribute}
 import lustre/element
-import lustre/element/html
 import lustre/element/svg
 
 // Sourced from https://lucide.dev/icons/pause
@@ -186,7 +185,7 @@ pub fn paint_roller() -> element.Element(a) {
 
 // Sourced from https://lucide.dev/icons/rotate-ccw
 //
-pub fn rotate_ccw() -> element.Element(a) {
+pub fn rotate_left() -> element.Element(a) {
   svg.svg(
     [
       attribute("stroke-linejoin", "round"),
@@ -210,7 +209,7 @@ pub fn rotate_ccw() -> element.Element(a) {
 
 // Sourced from https://lucide.dev/icons/rotate-cw
 //
-pub fn rotate_cw() -> element.Element(a) {
+pub fn rotate_right() -> element.Element(a) {
   svg.svg(
     [
       attribute("stroke-linejoin", "round"),

@@ -8,12 +8,14 @@ import game/runtime
 import game/web/icon
 import gleam/dict
 import gleam/int
+import gleam/io
 import gleam/list
 import lustre
 import lustre/attribute
 import lustre/effect
 import lustre/element
 import lustre/element/html
+import lustre/event
 
 pub fn main() -> Nil {
   let app = lustre.application(init, update, view)
@@ -23,7 +25,7 @@ pub fn main() -> Nil {
 }
 
 type GameState {
-  Editing
+  Editing(selected_function: Int, selected_slot: Int)
   Running
 }
 
@@ -31,21 +33,41 @@ type Model {
   Model(level_number: Int, runtime: runtime.Runtime, state: GameState)
 }
 
-type Message
+type Message {
+  /// Used in development and for debugging purposes
+  ConsoleLog(String)
+
+  UserPressedAction(program.Action)
+  UserPressedCondition(color.Color)
+}
 
 fn init(_: Nil) -> #(Model, effect.Effect(b)) {
   let assert Ok(level) = level.parse(seed.level_7)
   let runtime = runtime.init(level)
 
-  #(Model(level_number: 1, runtime:, state: Editing), effect.none())
+  let state = Editing(selected_function: 0, selected_slot: 0)
+  #(Model(level_number: 1, runtime:, state:), effect.none())
 }
 
 fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
+  case message {
+    ConsoleLog(message) -> {
+      io.println(message)
+    }
+    UserPressedAction(action) -> {
+      echo action as "action"
+      Nil
+    }
+    UserPressedCondition(color) -> {
+      echo color as "color"
+      Nil
+    }
+  }
   #(model, effect.none())
 }
 
 fn view(model: Model) -> element.Element(Message) {
-  html.div([attribute.class("p-20 bg-gray-100 w-screen h-screen")], [
+  html.div([attribute.class("p-20 bg-gray-100 w-screen h-full min-h-screen")], [
     html.header([attribute.class("flex justify-between items-end")], [
       html.h1([attribute.class("font-bold text-2xl")], [
         html.text("Level " <> int.to_string(model.level_number)),
@@ -69,6 +91,8 @@ fn view(model: Model) -> element.Element(Message) {
 }
 
 fn function_editor(model: Model) -> element.Element(Message) {
+  let assert Editing(selected_function:, selected_slot:) = model.state
+
   let functions =
     runtime.program(model.runtime).functions
     |> dict.to_list
@@ -76,30 +100,30 @@ fn function_editor(model: Model) -> element.Element(Message) {
 
   let functions =
     list.map(functions, fn(func) {
-      let #(index, slots) = func
+      let #(func_index, slots) = func
 
       let slots =
-        [
-          program.Filled(program.when_on(color.Red, program.Forward)),
-          program.Filled(program.always(program.Fill(color.Red))),
-          program.Filled(program.always(program.Call(1))),
-        ]
-        |> list.map(fn(slot) {
-          // list.map(slots, fn(slot) {
-          let instruction_el = case slot {
+        list.index_map(slots, fn(slot, slot_index) {
+          let attrs = case
+            func_index == selected_function,
+            slot_index == selected_slot
+          {
+            True, True -> [attribute.class("bg-gray-300")]
+            _, _ -> []
+          }
+          case slot {
             program.EmptySlot -> {
-              element.fragment([])
+              html.div([attribute.class("w-full h-full"), ..attrs], [])
             }
             program.Filled(instruction) -> {
-              instruction_component(instruction)
+              instruction_component(instruction, attrs)
             }
           }
-          html.div([attribute.class("w-6 h-6")], [instruction_el])
         })
 
       let label =
         html.div([attribute.class("font-semibold")], [
-          html.text("F" <> int.to_string(index)),
+          html.text("F" <> int.to_string(func_index)),
         ])
 
       let with_container =
@@ -118,13 +142,117 @@ fn function_editor(model: Model) -> element.Element(Message) {
       html.div([attribute.class("flex")], with_container)
     })
 
-  html.div([attribute.class("space-y-1")], functions)
+  let action = fn(
+    attrs: List(attribute.Attribute(Message)),
+    action: program.Action,
+    el: element.Element(Message),
+  ) {
+    html.button(
+      [
+        attribute.class("border border-black p-2 cursor-pointer"),
+        event.on_click(UserPressedAction(action)),
+        ..attrs
+      ],
+      [el],
+    )
+  }
+  let condition = fn(
+    attrs: List(attribute.Attribute(Message)),
+    color: color.Color,
+    el: element.Element(Message),
+  ) {
+    html.button(
+      [
+        attribute.class("border border-black p-2 cursor-pointer"),
+        event.on_click(UserPressedCondition(color)),
+        ..attrs
+      ],
+      [el],
+    )
+  }
+
+  let actions =
+    html.div(
+      [
+        attribute.class(
+          "grid grid-cols-[repeat(3,3rem)] auto-rows-[3rem] [&>*]:grid [&>*]:place-items-center",
+        ),
+      ],
+      [
+        action([], program.RotateLeft, icon.rotate_left()),
+        action([], program.Forward, icon.arrow_up()),
+        action([], program.RotateRight, icon.rotate_right()),
+        action(
+          [attribute.class("font-semibold")],
+          program.Call(0),
+          html.text("F0"),
+        ),
+        action(
+          [attribute.class("font-semibold")],
+          program.Call(1),
+          html.text("F1"),
+        ),
+        action(
+          [attribute.class("font-semibold")],
+          program.Call(2),
+          html.text("F2"),
+        ),
+        action(
+          [attribute.class("text-red-500")],
+          program.Fill(color.Red),
+          icon.paint_roller(),
+        ),
+        action(
+          [attribute.class("text-blue-500")],
+          program.Fill(color.Blue),
+          icon.paint_roller(),
+        ),
+        action(
+          [attribute.class("text-green-500")],
+          program.Fill(color.Green),
+          icon.paint_roller(),
+        ),
+
+        condition(
+          [attribute.class("bg-red-500")],
+          color.Red,
+          html.div([attribute.class("w-6 h-6")], []),
+        ),
+        condition(
+          [attribute.class("bg-blue-500")],
+          color.Blue,
+          html.div([attribute.class("w-6 h-6")], []),
+        ),
+        condition(
+          [attribute.class("bg-green-500")],
+          color.Green,
+          html.div([attribute.class("w-6 h-6")], []),
+        ),
+      ],
+    )
+
+  html.div([attribute.class("space-y-4")], [
+    html.div([attribute.class("space-y-1")], functions),
+    actions,
+  ])
 }
 
 fn stack(runtime: runtime.Runtime) -> element.Element(Message) {
   let stack =
     runtime.stack(runtime)
-    |> list.map(instruction_component)
+    // [
+    //   program.always(program.Forward),
+    //   program.always(program.RotateRight),
+    //   program.always(program.RotateLeft),
+    //   program.always(program.Call(1)),
+    //   program.always(program.Fill(color.Red)),
+    //   program.when_on(color.Red, program.Forward),
+    //   program.when_on(color.Red, program.RotateRight),
+    //   program.when_on(color.Red, program.RotateLeft),
+    //   program.when_on(color.Red, program.Call(1)),
+    //   program.when_on(color.Red, program.Fill(color.Red)),
+    // ]
+    |> list.map(instruction_component(_, []))
 
   html.div([attribute.class("w-full border p-4 font-semibold space-y-4")], [
     html.p([], [html.text("Execution Stack")]),
@@ -172,6 +300,7 @@ fn foreground_color_class(color: color.Color) -> String {
 
 fn instruction_component(
   instruction: program.Instruction,
+  attrs: List(attribute.Attribute(Message)),
 ) -> element.Element(Message) {
   let icon =
     html.div([attribute.class("w-6 h-6")], [action_icon(instruction.action)])
@@ -189,14 +318,14 @@ fn instruction_component(
       html.div([attribute.class("w-full h-2")], [])
     }
   }
-  html.div([attribute.class("p-1 space-y-1")], [icon, color_tag])
+  html.div([attribute.class("p-1 space-y-1"), ..attrs], [icon, color_tag])
 }
 
 fn action_icon(action: program.Action) -> element.Element(Message) {
   case action {
     program.Forward -> icon.arrow_up()
-    program.RotateRight -> icon.rotate_cw()
-    program.RotateLeft -> icon.rotate_ccw()
+    program.RotateRight -> icon.rotate_right()
+    program.RotateLeft -> icon.rotate_left()
     program.Fill(color) ->
       html.div([attribute.class(foreground_color_class(color))], [
         icon.paint_roller(),

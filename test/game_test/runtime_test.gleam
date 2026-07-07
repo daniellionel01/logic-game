@@ -5,20 +5,20 @@ import game/level/seed
 import game/program
 import game/runtime
 
-pub fn level_1_runtime_to_string_init_test() {
-  let assert Ok(level) = level.parse(seed.level_1)
-  let runtime = runtime.init(level)
-  runtime
-  |> runtime.to_string
-  |> birdie.snap(title: "runtime to string with level 1 initializes correctly")
-}
-
 fn slot_always(action: program.Action) -> program.Slot {
   program.Filled(program.Instruction(action:, condition: program.Always))
 }
 
 fn slot_when_on(color: color.Color, action: program.Action) -> program.Slot {
   program.Filled(program.Instruction(action:, condition: program.WhenOn(color)))
+}
+
+pub fn level_1_runtime_to_string_init_test() {
+  let assert Ok(level) = level.parse(seed.level_1)
+  let runtime = runtime.init(level)
+  runtime
+  |> runtime.to_string
+  |> birdie.snap(title: "runtime to string with level 1 initializes correctly")
 }
 
 pub fn level_2_runtime_to_string_with_solution_program_test() {
