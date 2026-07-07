@@ -13,16 +13,24 @@ pub fn level_1_runtime_to_string_init_test() {
   |> birdie.snap(title: "runtime to string with level 1 initializes correctly")
 }
 
+fn slot_always(action: program.Action) -> program.Slot {
+  program.Filled(program.Instruction(action:, condition: program.Always))
+}
+
+fn slot_when_on(color: color.Color, action: program.Action) -> program.Slot {
+  program.Filled(program.Instruction(action:, condition: program.WhenOn(color)))
+}
+
 pub fn level_2_runtime_to_string_with_solution_program_test() {
   let assert Ok(level) = level.parse(seed.level_2)
   let runtime =
     runtime.init(level)
     |> runtime.fill_program_slots(0, [
-      program.slot(program.always(program.Forward)),
-      program.slot(program.always(program.RotateLeft)),
-      program.slot(program.always(program.Forward)),
-      program.slot(program.always(program.RotateRight)),
-      program.slot(program.always(program.Call(0))),
+      slot_always(program.Forward),
+      slot_always(program.RotateLeft),
+      slot_always(program.Forward),
+      slot_always(program.RotateRight),
+      slot_always(program.Call(0)),
     ])
 
   runtime
@@ -37,11 +45,11 @@ pub fn level_3_runtime_to_string_with_solution_program_test() {
   let runtime =
     runtime.init(level)
     |> runtime.fill_program_slots(0, [
-      program.slot(program.always(program.Forward)),
-      program.slot(program.when_on(color.Red, program.RotateRight)),
-      program.slot(program.when_on(color.Red, program.Forward)),
-      program.slot(program.always(program.RotateLeft)),
-      program.slot(program.always(program.Call(0))),
+      slot_always(program.Forward),
+      slot_when_on(color.Red, program.RotateRight),
+      slot_when_on(color.Red, program.Forward),
+      slot_always(program.RotateLeft),
+      slot_always(program.Call(0)),
     ])
 
   runtime
@@ -56,11 +64,11 @@ pub fn level_3_runtime_to_string_one_stack_pass_test() {
   let runtime =
     runtime.init(level)
     |> runtime.fill_program_slots(0, [
-      program.slot(program.always(program.Forward)),
-      program.slot(program.when_on(color.Red, program.RotateRight)),
-      program.slot(program.when_on(color.Red, program.Forward)),
-      program.slot(program.always(program.RotateLeft)),
-      program.slot(program.always(program.Call(0))),
+      slot_always(program.Forward),
+      slot_when_on(color.Red, program.RotateRight),
+      slot_when_on(color.Red, program.Forward),
+      slot_always(program.RotateLeft),
+      slot_always(program.Call(0)),
     ])
     |> runtime.advance_multiple_times(6)
 
@@ -76,11 +84,11 @@ pub fn level_3_won_state_to_string_test() {
   let runtime =
     runtime.init(level)
     |> runtime.fill_program_slots(0, [
-      program.slot(program.always(program.Forward)),
-      program.slot(program.when_on(color.Red, program.RotateRight)),
-      program.slot(program.when_on(color.Red, program.Forward)),
-      program.slot(program.always(program.RotateLeft)),
-      program.slot(program.always(program.Call(0))),
+      slot_always(program.Forward),
+      slot_when_on(color.Red, program.RotateRight),
+      slot_when_on(color.Red, program.Forward),
+      slot_always(program.RotateLeft),
+      slot_always(program.Call(0)),
     ])
     |> runtime.advance_multiple_times(54)
 
@@ -94,11 +102,11 @@ pub fn level_3_still_running_state_test() {
   let runtime =
     runtime.init(level)
     |> runtime.fill_program_slots(0, [
-      program.slot(program.always(program.Forward)),
-      program.slot(program.when_on(color.Red, program.RotateRight)),
-      program.slot(program.when_on(color.Red, program.Forward)),
-      program.slot(program.always(program.RotateLeft)),
-      program.slot(program.always(program.Call(0))),
+      slot_always(program.Forward),
+      slot_when_on(color.Red, program.RotateRight),
+      slot_when_on(color.Red, program.Forward),
+      slot_always(program.RotateLeft),
+      slot_always(program.Call(0)),
     ])
     |> runtime.advance_multiple_times(50)
 
@@ -111,11 +119,11 @@ pub fn level_3_won_state_test() {
   let runtime =
     runtime.init(level)
     |> runtime.fill_program_slots(0, [
-      program.slot(program.always(program.Forward)),
-      program.slot(program.when_on(color.Red, program.RotateRight)),
-      program.slot(program.when_on(color.Red, program.Forward)),
-      program.slot(program.always(program.RotateLeft)),
-      program.slot(program.always(program.Call(0))),
+      slot_always(program.Forward),
+      slot_when_on(color.Red, program.RotateRight),
+      slot_when_on(color.Red, program.Forward),
+      slot_always(program.RotateLeft),
+      slot_always(program.Call(0)),
     ])
     |> runtime.advance_multiple_times(54)
 
@@ -130,11 +138,11 @@ pub fn level_3_lost_state_test() {
     |> runtime.fill_program_slots(0, [
       // We modified the program instructions so the player
       // will eventually run out of bounds.
-      program.slot(program.always(program.Forward)),
-      program.slot(program.always(program.RotateRight)),
-      program.slot(program.always(program.Forward)),
-      program.slot(program.always(program.RotateLeft)),
-      program.slot(program.always(program.Call(0))),
+      slot_always(program.Forward),
+      slot_always(program.RotateRight),
+      slot_always(program.Forward),
+      slot_always(program.RotateLeft),
+      slot_always(program.Call(0)),
     ])
     |> runtime.advance_multiple_times(29)
 

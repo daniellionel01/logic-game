@@ -52,6 +52,10 @@ pub fn cells(runtime: Runtime) {
   runtime.cells
 }
 
+pub fn program(runtime: Runtime) {
+  runtime.program
+}
+
 pub fn stack(runtime: Runtime) {
   runtime.stack
 }
@@ -138,8 +142,7 @@ pub fn advance(runtime: Runtime) -> Runtime {
       // If the stack is empty, we push the instructions
       // of the first function.
       //
-      let functions = program.get_functions(runtime.program)
-      case dict.get(functions, 0) {
+      case dict.get(runtime.program.functions, 0) {
         Error(_) -> runtime
         Ok(slots) -> {
           let instructions = program.slots_to_instructions(slots)
@@ -211,8 +214,7 @@ fn execute_action(runtime: Runtime, action: program.Action) -> Runtime {
       Runtime(..runtime, player:)
     }
     program.Call(function_index) -> {
-      let functions = program.get_functions(runtime.program)
-      case dict.get(functions, function_index) {
+      case dict.get(runtime.program.functions, function_index) {
         Error(_) -> runtime
         Ok(slots) -> {
           let instructions = program.slots_to_instructions(slots)

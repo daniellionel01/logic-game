@@ -8,7 +8,7 @@ import gleam/string
 pub type Functions =
   dict.Dict(Int, List(Slot))
 
-pub opaque type Program {
+pub type Program {
   Program(functions: Functions)
 }
 
@@ -29,10 +29,6 @@ pub fn fill_slots(
 ) -> Program {
   let functions = dict.insert(program.functions, function_index, slots)
   Program(functions:)
-}
-
-pub fn get_functions(program: Program) -> Functions {
-  program.functions
 }
 
 pub type Condition {
@@ -60,17 +56,9 @@ pub fn when_on(color: color.Color, action: Action) {
   Instruction(action:, condition: WhenOn(color))
 }
 
-pub opaque type Slot {
+pub type Slot {
   EmptySlot
   Filled(Instruction)
-}
-
-pub fn empty_slot() {
-  EmptySlot
-}
-
-pub fn slot(instruction: Instruction) {
-  Filled(instruction)
 }
 
 pub fn slots_to_instructions(slots: List(Slot)) -> List(Instruction) {

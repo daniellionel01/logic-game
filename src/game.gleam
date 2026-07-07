@@ -6,6 +6,7 @@ import game/position
 import game/program
 import game/runtime
 import game/web/icon
+import gleam/dict
 import gleam/int
 import gleam/list
 import lustre
@@ -21,17 +22,22 @@ pub fn main() -> Nil {
   Nil
 }
 
+type GameState {
+  Editing
+  Running
+}
+
 type Model {
-  Model(level_number: Int, runtime: runtime.Runtime)
+  Model(level_number: Int, runtime: runtime.Runtime, state: GameState)
 }
 
 type Message
 
 fn init(_: Nil) -> #(Model, effect.Effect(b)) {
-  let assert Ok(level) = level.parse(seed.level_1)
+  let assert Ok(level) = level.parse(seed.level_7)
   let runtime = runtime.init(level)
 
-  #(Model(level_number: 1, runtime:), effect.none())
+  #(Model(level_number: 1, runtime:, state: Editing), effect.none())
 }
 
 fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
@@ -57,32 +63,68 @@ fn view(model: Model) -> element.Element(Message) {
     html.main([attribute.class("space-y-8")], [
       stack(model.runtime),
       grid(model.runtime),
+      function_editor(model),
     ]),
   ])
 }
 
-fn stack(runtime: runtime.Runtime) {
-  let stack =
-    runtime.stack(runtime)
-    |> list.map(fn(instruction) {
-      let icon =
-        html.div([attribute.class("w-6 h-6")], [action_icon(instruction.action)])
-      let color_tag = case instruction {
-        program.Instruction(action: _, condition: program.WhenOn(color)) -> {
+fn function_editor(model: Model) -> element.Element(Message) {
+  let functions =
+    runtime.program(model.runtime).functions
+    |> dict.to_list
+    |> list.sort(fn(a, b) { int.compare(a.0, b.0) })
+
+  let functions =
+    list.map(functions, fn(func) {
+      let #(index, slots) = func
+
+      let slots =
+        [
+          program.Filled(program.when_on(color.Red, program.Forward)),
+          program.Filled(program.always(program.Fill(color.Red))),
+          program.Filled(program.always(program.Call(1))),
+        ]
+        |> list.map(fn(slot) {
+          // list.map(slots, fn(slot) {
+          let instruction_el = case slot {
+            program.EmptySlot -> {
+              element.fragment([])
+            }
+            program.Filled(instruction) -> {
+              instruction_component(instruction)
+            }
+          }
+          html.div([attribute.class("w-6 h-6")], [instruction_el])
+        })
+
+      let label =
+        html.div([attribute.class("font-semibold")], [
+          html.text("F" <> int.to_string(index)),
+        ])
+
+      let with_container =
+        [label, ..slots]
+        |> list.map(fn(el) {
           html.div(
             [
-              attribute.class("w-full h-2 rounded-sm"),
-              attribute.classes([#(background_color_class(color), True)]),
+              attribute.class(
+                "w-12 h-12 border flex items-center justify-center",
+              ),
             ],
-            [],
+            [el],
           )
-        }
-        program.Instruction(action: _, condition: program.Always) -> {
-          html.div([attribute.class("w-full h-2")], [])
-        }
-      }
-      html.div([attribute.class("p-1 space-y-1")], [icon, color_tag])
+        })
+
+      html.div([attribute.class("flex")], with_container)
     })
+
+  html.div([attribute.class("space-y-1")], functions)
+}
+
+fn stack(runtime: runtime.Runtime) -> element.Element(Message) {
+  let stack =
+    runtime.stack(runtime)
+    |> list.map(instruction_component)
 
   html.div([attribute.class("w-full border p-4 font-semibold space-y-4")], [
     html.p([], [html.text("Execution Stack")]),
@@ -90,7 +132,7 @@ fn stack(runtime: runtime.Runtime) {
   ])
 }
 
-fn grid(runtime: runtime.Runtime) {
+fn grid(runtime: runtime.Runtime) -> element.Element(Message) {
   let size = level.size(runtime.cells(runtime))
 
   let cells =
@@ -128,7 +170,29 @@ fn foreground_color_class(color: color.Color) -> String {
   }
 }
 
-fn action_icon(action: program.Action) -> element.Element(a) {
+fn instruction_component(
+  instruction: program.Instruction,
+) -> element.Element(Message) {
+  let icon =
+    html.div([attribute.class("w-6 h-6")], [action_icon(instruction.action)])
+  let color_tag = case instruction {
+    program.Instruction(action: _, condition: program.WhenOn(color)) -> {
+      html.div(
+        [
+          attribute.class("w-full h-2 rounded-sm"),
+          attribute.classes([#(background_color_class(color), True)]),
+        ],
+        [],
+      )
+    }
+    program.Instruction(action: _, condition: program.Always) -> {
+      html.div([attribute.class("w-full h-2")], [])
+    }
+  }
+  html.div([attribute.class("p-1 space-y-1")], [icon, color_tag])
+}
+
+fn action_icon(action: program.Action) -> element.Element(Message) {
   case action {
     program.Forward -> icon.arrow_up()
     program.RotateRight -> icon.rotate_cw()
@@ -144,7 +208,10 @@ fn action_icon(action: program.Action) -> element.Element(a) {
   }
 }
 
-fn cell(runtime: runtime.Runtime, position: position.Position) {
+fn cell(
+  runtime: runtime.Runtime,
+  position: position.Position,
+) -> element.Element(Message) {
   let cell =
     list.find(runtime.cells(runtime), fn(cell) {
       position.equal(cell.position, position)
