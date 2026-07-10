@@ -20,7 +20,7 @@ import gleam/string
 ///
 pub const max_stack_size = 1000
 
-pub opaque type Runtime {
+pub type Runtime {
   Runtime(
     // We keep a reference back to the initial level,
     // so we can reset the state.
@@ -46,26 +46,6 @@ pub fn init(level: level.Level) -> Runtime {
 
 pub fn reset(runtime: Runtime) -> Runtime {
   init(runtime.level)
-}
-
-pub fn cells(runtime: Runtime) {
-  runtime.cells
-}
-
-pub fn program(runtime: Runtime) {
-  runtime.program
-}
-
-pub fn stack(runtime: Runtime) {
-  runtime.stack
-}
-
-pub fn remaining_stars(runtime: Runtime) {
-  runtime.remaining_stars
-}
-
-pub fn player(runtime: Runtime) {
-  runtime.player
 }
 
 pub fn fill_program_slots(

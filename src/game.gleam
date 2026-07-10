@@ -1,3 +1,4 @@
+import game/listx
 import game/level
 import game/level/color
 import game/level/direction
@@ -37,8 +38,9 @@ type Message {
   /// Used in development and for debugging purposes
   ConsoleLog(String)
 
-  UserPressedAction(program.Action)
-  UserPressedCondition(color.Color)
+  UserClickedAction(program.Action)
+  UserClickedCondition(color.Color)
+  UserClickedSlot(selected_function: Int, selected_slot: Int)
 }
 
 fn init(_: Nil) -> #(Model, effect.Effect(b)) {
@@ -50,17 +52,76 @@ fn init(_: Nil) -> #(Model, effect.Effect(b)) {
 }
 
 fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
-  case message {
+  let model = case message {
     ConsoleLog(message) -> {
       io.println(message)
+      model
     }
-    UserPressedAction(action) -> {
-      echo action as "action"
-      Nil
+    UserClickedAction(action) -> {
+      let assert Editing(selected_function:, selected_slot:) = model.state
+
+      let assert Ok(function) = dict.get(model.runtime.program.functions, selected_function)
+      let assert Ok(slot) = listx.get_index(function, selected_slot)
+      let slot = case slot {
+        program.EmptySlot -> {
+          program.Filled(program.Instruction(action, program.Always))
+        }
+        program.Filled(instruction) -> {
+          case instruction {
+            program.Instruction(action:, condition: program.Always) -> {
+              program.Filled(program.Instruction(action, program.Always))
+            }
+            program.Instruction(action:, condition: program.WhenOn(color)) -> {
+              program.Filled(program.Instruction(action, program.WhenOn(color)))
+            }
+          }
+        }
+      }
+
+      let assert Ok(program) =
+        program.fill_slot(
+          model.runtime.program,
+          slot_index: selected_slot,
+          function_index: selected_function,
+          slot:,
+        )
+      let runtime = runtime.Runtime(..model.runtime, program:)
+      Model(..model, runtime:)
     }
-    UserPressedCondition(color) -> {
-      echo color as "color"
-      Nil
+    UserClickedCondition(color) -> {
+      let assert Editing(selected_function:, selected_slot:) = model.state
+
+      let assert Ok(function) = dict.get(model.runtime.program.functions, selected_function)
+      let assert Ok(slot) = listx.get_index(function, selected_slot)
+      let slot = case slot {
+        program.EmptySlot -> {
+          program.EmptySlot
+        }
+        program.Filled(instruction) -> {
+          case instruction {
+            program.Instruction(action:, condition: program.Always) -> {
+              program.Filled(program.Instruction(action, program.WhenOn(color)))
+            }
+            program.Instruction(action:, condition: program.WhenOn(_)) -> {
+              program.Filled(program.Instruction(action, program.WhenOn(color)))
+            }
+          }
+        }
+      }
+
+      let assert Ok(program) =
+        program.fill_slot(
+          model.runtime.program,
+          slot_index: selected_slot,
+          function_index: selected_function,
+          slot:,
+        )
+      let runtime = runtime.Runtime(..model.runtime, program:)
+      Model(..model, runtime:)
+    }
+    UserClickedSlot(selected_function:, selected_slot:) -> {
+      let state = Editing(selected_function:, selected_slot:)
+      Model(..model, state:)
     }
   }
   #(model, effect.none())
@@ -94,7 +155,7 @@ fn function_editor(model: Model) -> element.Element(Message) {
   let assert Editing(selected_function:, selected_slot:) = model.state
 
   let functions =
-    runtime.program(model.runtime).functions
+    model.runtime.program.functions
     |> dict.to_list
     |> list.sort(fn(a, b) { int.compare(a.0, b.0) })
 
@@ -104,16 +165,20 @@ fn function_editor(model: Model) -> element.Element(Message) {
 
       let slots =
         list.index_map(slots, fn(slot, slot_index) {
-          let attrs = case
-            func_index == selected_function,
-            slot_index == selected_slot
-          {
-            True, True -> [attribute.class("bg-gray-300")]
-            _, _ -> []
-          }
+          let selected =
+            func_index == selected_function && slot_index == selected_slot
+          let attrs = [
+            attribute.class("w-full h-full cursor-pointer"),
+            attribute.classes([#("bg-gray-300", selected)]),
+            event.on_click(UserClickedSlot(
+              selected_function: func_index,
+              selected_slot: slot_index,
+            )),
+          ]
+
           case slot {
             program.EmptySlot -> {
-              html.div([attribute.class("w-full h-full"), ..attrs], [])
+              html.div(attrs, [])
             }
             program.Filled(instruction) -> {
               instruction_component(instruction, attrs)
@@ -150,7 +215,7 @@ fn function_editor(model: Model) -> element.Element(Message) {
     html.button(
       [
         attribute.class("border border-black p-2 cursor-pointer"),
-        event.on_click(UserPressedAction(action)),
+        event.on_click(UserClickedAction(action)),
         ..attrs
       ],
       [el],
@@ -164,7 +229,7 @@ fn function_editor(model: Model) -> element.Element(Message) {
     html.button(
       [
         attribute.class("border border-black p-2 cursor-pointer"),
-        event.on_click(UserPressedCondition(color)),
+        event.on_click(UserClickedCondition(color)),
         ..attrs
       ],
       [el],
@@ -238,21 +303,19 @@ fn function_editor(model: Model) -> element.Element(Message) {
 }
 
 fn stack(runtime: runtime.Runtime) -> element.Element(Message) {
-  let stack =
-    runtime.stack(runtime)
-    // [
-    //   program.always(program.Forward),
-    //   program.always(program.RotateRight),
-    //   program.always(program.RotateLeft),
-    //   program.always(program.Call(1)),
-    //   program.always(program.Fill(color.Red)),
-    //   program.when_on(color.Red, program.Forward),
-    //   program.when_on(color.Red, program.RotateRight),
-    //   program.when_on(color.Red, program.RotateLeft),
-    //   program.when_on(color.Red, program.Call(1)),
-    //   program.when_on(color.Red, program.Fill(color.Red)),
-    // ]
-    |> list.map(instruction_component(_, []))
+  // [
+  //   program.always(program.Forward),
+  //   program.always(program.RotateRight),
+  //   program.always(program.RotateLeft),
+  //   program.always(program.Call(1)),
+  //   program.always(program.Fill(color.Red)),
+  //   program.when_on(color.Red, program.Forward),
+  //   program.when_on(color.Red, program.RotateRight),
+  //   program.when_on(color.Red, program.RotateLeft),
+  //   program.when_on(color.Red, program.Call(1)),
+  //   program.when_on(color.Red, program.Fill(color.Red)),
+  // ]
+  let stack = list.map(runtime.stack, instruction_component(_, []))
 
   html.div([attribute.class("w-full border p-4 font-semibold space-y-4")], [
     html.p([], [html.text("Execution Stack")]),
@@ -261,7 +324,7 @@ fn stack(runtime: runtime.Runtime) -> element.Element(Message) {
 }
 
 fn grid(runtime: runtime.Runtime) -> element.Element(Message) {
-  let size = level.size(runtime.cells(runtime))
+  let size = level.size(runtime.cells)
 
   let cells =
     list.repeat(0, times: size.columns * size.rows)
@@ -342,7 +405,7 @@ fn cell(
   position: position.Position,
 ) -> element.Element(Message) {
   let cell =
-    list.find(runtime.cells(runtime), fn(cell) {
+    list.find(runtime.cells, fn(cell) {
       position.equal(cell.position, position)
     })
 
@@ -352,7 +415,7 @@ fn cell(
   }
 
   let star =
-    list.find(runtime.remaining_stars(runtime), fn(star) {
+    list.find(runtime.remaining_stars, fn(star) {
       position.equal(star.position, position)
     })
   let star = case star {
@@ -362,7 +425,7 @@ fn cell(
     }
   }
 
-  let player = runtime.player(runtime)
+  let player = runtime.player
   let player = case position.equal(player.position, position) {
     False -> element.fragment([])
     True -> {
