@@ -1,8 +1,8 @@
-import game/listx
 import game/level
 import game/level/color
 import game/level/direction
 import game/level/seed
+import game/listx
 import game/position
 import game/program
 import game/runtime
@@ -41,6 +41,9 @@ type Message {
   UserClickedAction(program.Action)
   UserClickedCondition(color.Color)
   UserClickedSlot(selected_function: Int, selected_slot: Int)
+
+  UserClickedStart
+  UserClickedStop
 }
 
 fn init(_: Nil) -> #(Model, effect.Effect(b)) {
@@ -60,7 +63,8 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
     UserClickedAction(action) -> {
       let assert Editing(selected_function:, selected_slot:) = model.state
 
-      let assert Ok(function) = dict.get(model.runtime.program.functions, selected_function)
+      let assert Ok(function) =
+        dict.get(model.runtime.program.functions, selected_function)
       let assert Ok(slot) = listx.get_index(function, selected_slot)
       let slot = case slot {
         program.EmptySlot -> {
@@ -91,7 +95,8 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
     UserClickedCondition(color) -> {
       let assert Editing(selected_function:, selected_slot:) = model.state
 
-      let assert Ok(function) = dict.get(model.runtime.program.functions, selected_function)
+      let assert Ok(function) =
+        dict.get(model.runtime.program.functions, selected_function)
       let assert Ok(slot) = listx.get_index(function, selected_slot)
       let slot = case slot {
         program.EmptySlot -> {
@@ -123,6 +128,13 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
       let state = Editing(selected_function:, selected_slot:)
       Model(..model, state:)
     }
+    UserClickedStart -> {
+      Model(..model, state: Running)
+    }
+    UserClickedStop -> {
+      let state = Editing(selected_function: 0, selected_slot: 0)
+      Model(..model, state:)
+    }
   }
   #(model, effect.none())
 }
@@ -144,15 +156,123 @@ fn view(model: Model) -> element.Element(Message) {
     ]),
     html.hr([attribute.class("my-8")]),
     html.main([attribute.class("space-y-8")], [
-      stack(model.runtime),
+      html.div([attribute.class("flex gap-4")], [
+        stack(model.runtime),
+        controls(model),
+      ]),
       grid(model.runtime),
-      function_editor(model),
+      function_slots(model),
+      case model.state {
+        Editing(_, _) -> {
+          function_editor()
+        }
+        Running -> {
+          element.fragment([])
+        }
+      },
     ]),
   ])
 }
 
-fn function_editor(model: Model) -> element.Element(Message) {
-  let assert Editing(selected_function:, selected_slot:) = model.state
+fn function_editor() -> element.Element(Message) {
+  let action = fn(
+    attrs: List(attribute.Attribute(Message)),
+    action: program.Action,
+    el: element.Element(Message),
+  ) {
+    html.button(
+      [
+        attribute.class("border border-black p-2 cursor-pointer"),
+        event.on_click(UserClickedAction(action)),
+        ..attrs
+      ],
+      [el],
+    )
+  }
+  let condition = fn(
+    attrs: List(attribute.Attribute(Message)),
+    color: color.Color,
+    el: element.Element(Message),
+  ) {
+    html.button(
+      [
+        attribute.class("border border-black p-2 cursor-pointer"),
+        event.on_click(UserClickedCondition(color)),
+        ..attrs
+      ],
+      [el],
+    )
+  }
+
+  html.div(
+    [
+      attribute.class(
+        "grid grid-cols-[repeat(3,3rem)] auto-rows-[3rem] [&>*]:grid [&>*]:place-items-center",
+      ),
+    ],
+    [
+      action([], program.RotateLeft, icon.rotate_left()),
+      action([], program.Forward, icon.arrow_up()),
+      action([], program.RotateRight, icon.rotate_right()),
+      action(
+        [attribute.class("font-semibold")],
+        program.Call(0),
+        html.text("F0"),
+      ),
+      action(
+        [attribute.class("font-semibold")],
+        program.Call(1),
+        html.text("F1"),
+      ),
+      action(
+        [attribute.class("font-semibold")],
+        program.Call(2),
+        html.text("F2"),
+      ),
+      action(
+        [attribute.class("text-red-500")],
+        program.Fill(color.Red),
+        icon.paint_roller(),
+      ),
+      action(
+        [attribute.class("text-blue-500")],
+        program.Fill(color.Blue),
+        icon.paint_roller(),
+      ),
+      action(
+        [attribute.class("text-green-500")],
+        program.Fill(color.Green),
+        icon.paint_roller(),
+      ),
+
+      condition(
+        [attribute.class("bg-red-500")],
+        color.Red,
+        html.div([attribute.class("w-6 h-6")], []),
+      ),
+      condition(
+        [attribute.class("bg-blue-500")],
+        color.Blue,
+        html.div([attribute.class("w-6 h-6")], []),
+      ),
+      condition(
+        [attribute.class("bg-green-500")],
+        color.Green,
+        html.div([attribute.class("w-6 h-6")], []),
+      ),
+    ],
+  )
+}
+
+fn function_slots(model: Model) -> element.Element(Message) {
+  let #(selected_function, selected_slot) = case model.state {
+    Editing(selected_function:, selected_slot:) -> {
+      #(selected_function, selected_slot)
+    }
+    Running -> {
+      #(-1, -1)
+    }
+  }
 
   let functions =
     model.runtime.program.functions
@@ -207,114 +327,39 @@ fn function_editor(model: Model) -> element.Element(Message) {
       html.div([attribute.class("flex")], with_container)
     })
 
-  let action = fn(
-    attrs: List(attribute.Attribute(Message)),
-    action: program.Action,
-    el: element.Element(Message),
-  ) {
-    html.button(
-      [
-        attribute.class("border border-black p-2 cursor-pointer"),
-        event.on_click(UserClickedAction(action)),
-        ..attrs
-      ],
-      [el],
-    )
-  }
-  let condition = fn(
-    attrs: List(attribute.Attribute(Message)),
-    color: color.Color,
-    el: element.Element(Message),
-  ) {
-    html.button(
-      [
-        attribute.class("border border-black p-2 cursor-pointer"),
-        event.on_click(UserClickedCondition(color)),
-        ..attrs
-      ],
-      [el],
-    )
-  }
+  html.div([attribute.class("space-y-1")], functions)
+}
 
-  let actions =
-    html.div(
-      [
-        attribute.class(
-          "grid grid-cols-[repeat(3,3rem)] auto-rows-[3rem] [&>*]:grid [&>*]:place-items-center",
-        ),
-      ],
-      [
-        action([], program.RotateLeft, icon.rotate_left()),
-        action([], program.Forward, icon.arrow_up()),
-        action([], program.RotateRight, icon.rotate_right()),
-        action(
-          [attribute.class("font-semibold")],
-          program.Call(0),
-          html.text("F0"),
-        ),
-        action(
-          [attribute.class("font-semibold")],
-          program.Call(1),
-          html.text("F1"),
-        ),
-        action(
-          [attribute.class("font-semibold")],
-          program.Call(2),
-          html.text("F2"),
-        ),
-        action(
-          [attribute.class("text-red-500")],
-          program.Fill(color.Red),
-          icon.paint_roller(),
-        ),
-        action(
-          [attribute.class("text-blue-500")],
-          program.Fill(color.Blue),
-          icon.paint_roller(),
-        ),
-        action(
-          [attribute.class("text-green-500")],
-          program.Fill(color.Green),
-          icon.paint_roller(),
-        ),
-
-        condition(
-          [attribute.class("bg-red-500")],
-          color.Red,
-          html.div([attribute.class("w-6 h-6")], []),
-        ),
-        condition(
-          [attribute.class("bg-blue-500")],
-          color.Blue,
-          html.div([attribute.class("w-6 h-6")], []),
-        ),
-        condition(
-          [attribute.class("bg-green-500")],
-          color.Green,
-          html.div([attribute.class("w-6 h-6")], []),
-        ),
-      ],
-    )
-
-  html.div([attribute.class("space-y-4")], [
-    html.div([attribute.class("space-y-1")], functions),
-    actions,
+fn controls(model: Model) -> element.Element(Message) {
+  html.div([attribute.class("flex gap-4 border p-4")], [
+    case model.state {
+      Editing(selected_function: _, selected_slot: _) -> {
+        html.button(
+          [
+            attribute.class(
+              "cursor-pointer disabled:text-gray-400 disabled:cursor-not-allowed",
+            ),
+            event.on_click(UserClickedStart),
+          ],
+          [icon.play()],
+        )
+      }
+      Running -> {
+        html.button(
+          [
+            attribute.class(
+              "cursor-pointer disabled:text-gray-400 disabled:cursor-not-allowed",
+            ),
+            event.on_click(UserClickedStop),
+          ],
+          [icon.square()],
+        )
+      }
+    },
   ])
 }
 
 fn stack(runtime: runtime.Runtime) -> element.Element(Message) {
-  // [
-  //   program.always(program.Forward),
-  //   program.always(program.RotateRight),
-  //   program.always(program.RotateLeft),
-  //   program.always(program.Call(1)),
-  //   program.always(program.Fill(color.Red)),
-  //   program.when_on(color.Red, program.Forward),
-  //   program.when_on(color.Red, program.RotateRight),
-  //   program.when_on(color.Red, program.RotateLeft),
-  //   program.when_on(color.Red, program.Call(1)),
-  //   program.when_on(color.Red, program.Fill(color.Red)),
-  // ]
   let stack = list.map(runtime.stack, instruction_component(_, []))
 
   html.div([attribute.class("w-full border p-4 font-semibold space-y-4")], [

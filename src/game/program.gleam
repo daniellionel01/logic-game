@@ -35,17 +35,19 @@ pub fn fill_slot(
   program: Program,
   function_index function_index: Int,
   slot_index slot_index: Int,
-  slot replacement_slot: Slot
+  slot replacement_slot: Slot,
 ) -> Result(Program, Nil) {
   case dict.get(program.functions, function_index) {
     Ok(slots) -> {
-      let slots = list.index_map(slots, fn (current_slot, index) {
-        case index == slot_index {
-          False -> current_slot
-          True -> replacement_slot
-        }
-      })
-      let functions = dict.insert(program.functions, for: function_index, insert: slots)
+      let slots =
+        list.index_map(slots, fn(current_slot, index) {
+          case index == slot_index {
+            False -> current_slot
+            True -> replacement_slot
+          }
+        })
+      let functions =
+        dict.insert(program.functions, for: function_index, insert: slots)
       Ok(Program(functions:))
     }
     Error(_) -> {
