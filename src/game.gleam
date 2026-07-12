@@ -9,7 +9,6 @@ import game/runtime
 import game/web/icon
 import gleam/dict
 import gleam/int
-import gleam/io
 import gleam/list
 import lustre
 import lustre/attribute
@@ -27,7 +26,7 @@ pub fn main() -> Nil {
 
 type GameState {
   Editing(selected_function: Int, selected_slot: Int)
-  Running
+  Running(interval_id: Int)
 }
 
 type Model {
@@ -43,6 +42,7 @@ type Message {
   UserClickedSlot(selected_function: Int, selected_slot: Int)
 
   UserClickedStart
+  ProgramLoopStarted(interval_id: Int)
   UserClickedStop
 }
 
@@ -55,10 +55,10 @@ fn init(_: Nil) -> #(Model, effect.Effect(b)) {
 }
 
 fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
-  let model = case message {
+  case message {
     ConsoleLog(message) -> {
-      io.println(message)
-      model
+      echo message
+      #(model, effect.none())
     }
     UserClickedAction(action) -> {
       let assert Editing(selected_function:, selected_slot:) = model.state
@@ -90,7 +90,8 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
           slot:,
         )
       let runtime = runtime.Runtime(..model.runtime, program:)
-      Model(..model, runtime:)
+      let model = Model(..model, runtime:)
+      #(model, effect.none())
     }
     UserClickedCondition(color) -> {
       let assert Editing(selected_function:, selected_slot:) = model.state
@@ -122,22 +123,47 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
           slot:,
         )
       let runtime = runtime.Runtime(..model.runtime, program:)
-      Model(..model, runtime:)
+      let model = Model(..model, runtime:)
+      #(model, effect.none())
     }
     UserClickedSlot(selected_function:, selected_slot:) -> {
       let state = Editing(selected_function:, selected_slot:)
-      Model(..model, state:)
+      let model = Model(..model, state:)
+      #(model, effect.none())
     }
     UserClickedStart -> {
-      Model(..model, state: Running)
+      #(model, start_program_execution())
+    }
+    ProgramLoopStarted(interval_id) -> {
+      let model = Model(..model, state: Running(interval_id))
+      #(model, effect.none())
     }
     UserClickedStop -> {
+      let assert Running(interval_id:) = model.state
+      clear_interval(interval_id)
+
       let state = Editing(selected_function: 0, selected_slot: 0)
-      Model(..model, state:)
+      let model = Model(..model, state:)
+      #(model, effect.none())
     }
   }
-  #(model, effect.none())
 }
+
+fn start_program_execution() -> effect.Effect(Message) {
+  use dispatch <- effect.from()
+  let id =
+    do_every(1000, fn() {
+      echo "here"
+      Nil
+    })
+  dispatch(ProgramLoopStarted(id))
+}
+
+@external(javascript, "./game.ffi.mjs", "every")
+fn do_every(interval: Int, cb: fn() -> Nil) -> Int
+
+@external(javascript, "./game.ffi.mjs", "clear_interval")
+fn clear_interval(interval_id: Int) -> Nil
 
 fn view(model: Model) -> element.Element(Message) {
   html.div([attribute.class("p-20 bg-gray-100 w-screen h-full min-h-screen")], [
@@ -166,7 +192,7 @@ fn view(model: Model) -> element.Element(Message) {
         Editing(_, _) -> {
           function_editor()
         }
-        Running -> {
+        Running(_) -> {
           element.fragment([])
         }
       },
@@ -269,7 +295,7 @@ fn function_slots(model: Model) -> element.Element(Message) {
     Editing(selected_function:, selected_slot:) -> {
       #(selected_function, selected_slot)
     }
-    Running -> {
+    Running(_) -> {
       #(-1, -1)
     }
   }
@@ -333,7 +359,7 @@ fn function_slots(model: Model) -> element.Element(Message) {
 fn controls(model: Model) -> element.Element(Message) {
   html.div([attribute.class("flex gap-4 border p-4")], [
     case model.state {
-      Editing(selected_function: _, selected_slot: _) -> {
+      Editing(_, _) -> {
         html.button(
           [
             attribute.class(
@@ -344,7 +370,7 @@ fn controls(model: Model) -> element.Element(Message) {
           [icon.play()],
         )
       }
-      Running -> {
+      Running(_) -> {
         html.button(
           [
             attribute.class(

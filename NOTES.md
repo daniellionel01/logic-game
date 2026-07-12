@@ -10,10 +10,12 @@
 - migrate to iv
 
 - blog post
-  * naming is hard, naming tests is harder
-  * birdie rocks
-  * invest in text and stringification
-  * ddd can get tricky
-  * lists and indices are always a bit tricky in functional land
-  * investing in good types
-  * sketching out public apis
+  - naming is hard, naming tests is harder
+  - birdie rocks
+  - invest in text and stringification
+  - ddd can get tricky
+  - lists and indices are always a bit tricky in functional land (iv)
+  - investing in good types
+  - sketching out public apis
+  - layout issues with hiding / showing function editor
+  - lustre message naming conventions

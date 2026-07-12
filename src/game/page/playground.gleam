@@ -1,7 +1,7 @@
 import game/level/color
 import game/program
 
-fn sample_stack() {
+pub fn sample_stack() {
   [
     program.always(program.Forward),
     program.always(program.RotateRight),
