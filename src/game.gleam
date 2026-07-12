@@ -45,6 +45,8 @@ type Message {
   UserClickedStart
   ProgramLoopStarted(interval_id: interval.IntervalId)
   UserClickedStop
+
+  AdvanceProgram
 }
 
 fn init(_: Nil) -> #(Model, effect.Effect(b)) {
@@ -139,12 +141,19 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
       let model = Model(..model, state: Running(interval_id))
       #(model, effect.none())
     }
+    AdvanceProgram -> {
+      let runtime = runtime.advance(model.runtime)
+      let model = Model(..model, runtime:)
+      #(model, effect.none())
+    }
     UserClickedStop -> {
       let assert Running(interval_id:) = model.state
       interval.clear(interval_id)
 
+      let runtime = runtime.reset(model.runtime)
       let state = Editing(selected_function: 0, selected_slot: 0)
-      let model = Model(..model, state:)
+
+      let model = Model(..model, state:, runtime:)
       #(model, effect.none())
     }
   }
@@ -152,11 +161,7 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
 
 fn start_program_execution() -> effect.Effect(Message) {
   use dispatch <- effect.from()
-  let id =
-    interval.do_every(1000, fn() {
-      echo "here"
-      Nil
-    })
+  let id = interval.do_every(1000, fn() { dispatch(AdvanceProgram) })
   dispatch(ProgramLoopStarted(id))
 }
 
