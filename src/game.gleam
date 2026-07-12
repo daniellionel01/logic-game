@@ -7,6 +7,7 @@ import game/position
 import game/program
 import game/runtime
 import game/web/icon
+import game/web/interval
 import gleam/dict
 import gleam/int
 import gleam/list
@@ -26,7 +27,7 @@ pub fn main() -> Nil {
 
 type GameState {
   Editing(selected_function: Int, selected_slot: Int)
-  Running(interval_id: Int)
+  Running(interval_id: interval.IntervalId)
 }
 
 type Model {
@@ -42,7 +43,7 @@ type Message {
   UserClickedSlot(selected_function: Int, selected_slot: Int)
 
   UserClickedStart
-  ProgramLoopStarted(interval_id: Int)
+  ProgramLoopStarted(interval_id: interval.IntervalId)
   UserClickedStop
 }
 
@@ -140,7 +141,7 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
     }
     UserClickedStop -> {
       let assert Running(interval_id:) = model.state
-      clear_interval(interval_id)
+      interval.clear(interval_id)
 
       let state = Editing(selected_function: 0, selected_slot: 0)
       let model = Model(..model, state:)
@@ -152,18 +153,12 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
 fn start_program_execution() -> effect.Effect(Message) {
   use dispatch <- effect.from()
   let id =
-    do_every(1000, fn() {
+    interval.do_every(1000, fn() {
       echo "here"
       Nil
     })
   dispatch(ProgramLoopStarted(id))
 }
-
-@external(javascript, "./game.ffi.mjs", "every")
-fn do_every(interval: Int, cb: fn() -> Nil) -> Int
-
-@external(javascript, "./game.ffi.mjs", "clear_interval")
-fn clear_interval(interval_id: Int) -> Nil
 
 fn view(model: Model) -> element.Element(Message) {
   html.div([attribute.class("p-20 bg-gray-100 w-screen h-full min-h-screen")], [
