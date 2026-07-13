@@ -25,6 +25,8 @@ pub fn main() -> Nil {
   Nil
 }
 
+const grid_padding = 1
+
 type GameState {
   Editing(selected_function: Int, selected_slot: Int)
   Running(interval_id: interval.IntervalId)
@@ -38,15 +40,15 @@ type Message {
   /// Used in development and for debugging purposes
   ConsoleLog(String)
 
-  UserClickedAction(program.Action)
-  UserClickedCondition(color.Color)
-  UserClickedSlot(selected_function: Int, selected_slot: Int)
+  UserSelectedAction(program.Action)
+  UserSelectedCondition(color.Color)
+  UserSelectedSlot(selected_function: Int, selected_slot: Int)
 
-  UserClickedStart
-  ProgramLoopStarted(interval_id: interval.IntervalId)
-  UserClickedStop
+  UserRequestedProgramStart
+  ProgramExecutionStarted(interval_id: interval.IntervalId)
 
-  AdvanceProgram
+  ExecutionTimerTicked
+  UserRequestedProgramStop
 }
 
 fn init(_: Nil) -> #(Model, effect.Effect(b)) {
@@ -63,7 +65,7 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
       echo message
       #(model, effect.none())
     }
-    UserClickedAction(action) -> {
+    UserSelectedAction(action) -> {
       let assert Editing(selected_function:, selected_slot:) = model.state
 
       let assert Ok(function) =
@@ -96,7 +98,7 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
       let model = Model(..model, runtime:)
       #(model, effect.none())
     }
-    UserClickedCondition(color) -> {
+    UserSelectedCondition(color) -> {
       let assert Editing(selected_function:, selected_slot:) = model.state
 
       let assert Ok(function) =
@@ -129,40 +131,47 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
       let model = Model(..model, runtime:)
       #(model, effect.none())
     }
-    UserClickedSlot(selected_function:, selected_slot:) -> {
+    UserSelectedSlot(selected_function:, selected_slot:) -> {
       let state = Editing(selected_function:, selected_slot:)
       let model = Model(..model, state:)
       #(model, effect.none())
     }
-    UserClickedStart -> {
+    UserRequestedProgramStart -> {
       #(model, start_program_execution())
     }
-    ProgramLoopStarted(interval_id) -> {
+    ProgramExecutionStarted(interval_id) -> {
       let model = Model(..model, state: Running(interval_id))
       #(model, effect.none())
     }
-    AdvanceProgram -> {
+    ExecutionTimerTicked -> {
       let runtime = runtime.advance(model.runtime)
       let model = Model(..model, runtime:)
       #(model, effect.none())
     }
-    UserClickedStop -> {
+    UserRequestedProgramStop -> {
       let assert Running(interval_id:) = model.state
-      interval.clear(interval_id)
+      let effect = stop_program_execution(interval_id)
 
       let runtime = runtime.reset(model.runtime)
       let state = Editing(selected_function: 0, selected_slot: 0)
 
       let model = Model(..model, state:, runtime:)
-      #(model, effect.none())
+      #(model, effect)
     }
   }
 }
 
 fn start_program_execution() -> effect.Effect(Message) {
   use dispatch <- effect.from()
-  let id = interval.do_every(1000, fn() { dispatch(AdvanceProgram) })
-  dispatch(ProgramLoopStarted(id))
+  let id = interval.do_every(1000, fn() { dispatch(ExecutionTimerTicked) })
+  dispatch(ProgramExecutionStarted(id))
+}
+
+fn stop_program_execution(
+  interval_id: interval.IntervalId,
+) -> effect.Effect(message) {
+  use _dispatch <- effect.from()
+  interval.clear(interval_id)
 }
 
 fn view(model: Model) -> element.Element(Message) {
@@ -209,7 +218,7 @@ fn function_editor() -> element.Element(Message) {
     html.button(
       [
         attribute.class("border border-black p-2 cursor-pointer"),
-        event.on_click(UserClickedAction(action)),
+        event.on_click(UserSelectedAction(action)),
         ..attrs
       ],
       [el],
@@ -223,7 +232,7 @@ fn function_editor() -> element.Element(Message) {
     html.button(
       [
         attribute.class("border border-black p-2 cursor-pointer"),
-        event.on_click(UserClickedCondition(color)),
+        event.on_click(UserSelectedCondition(color)),
         ..attrs
       ],
       [el],
@@ -316,7 +325,7 @@ fn function_slots(model: Model) -> element.Element(Message) {
           let attrs = [
             attribute.class("w-full h-full cursor-pointer"),
             attribute.classes([#("bg-gray-300", selected)]),
-            event.on_click(UserClickedSlot(
+            event.on_click(UserSelectedSlot(
               selected_function: func_index,
               selected_slot: slot_index,
             )),
@@ -365,7 +374,7 @@ fn controls(model: Model) -> element.Element(Message) {
             attribute.class(
               "cursor-pointer disabled:text-gray-400 disabled:cursor-not-allowed",
             ),
-            event.on_click(UserClickedStart),
+            event.on_click(UserRequestedProgramStart),
           ],
           [icon.play()],
         )
@@ -376,7 +385,7 @@ fn controls(model: Model) -> element.Element(Message) {
             attribute.class(
               "cursor-pointer disabled:text-gray-400 disabled:cursor-not-allowed",
             ),
-            event.on_click(UserClickedStop),
+            event.on_click(UserRequestedProgramStop),
           ],
           [icon.square()],
         )
@@ -397,10 +406,68 @@ fn stack(runtime: runtime.Runtime) -> element.Element(Message) {
 fn grid(runtime: runtime.Runtime) -> element.Element(Message) {
   let size = level.size(runtime.cells)
 
+  let columns_with_border = size.columns + grid_padding * 2
+  let rows_with_border = size.rows + grid_padding * 2
+
   let cells =
-    list.repeat(0, times: size.columns * size.rows)
-    |> list.index_map(fn(_, index) { position.from_index(index, size.columns) })
-    |> list.map(cell(runtime, _))
+    list.repeat(0, times: columns_with_border * rows_with_border)
+    |> list.index_map(fn(_, index) {
+      let position = position.from_index(index, columns_with_border)
+      position.Position(
+        position.row - grid_padding,
+        position.column - grid_padding,
+      )
+    })
+    |> list.map(fn(position) {
+      let cell =
+        list.find(runtime.cells, fn(cell) {
+          position.equal(cell.position, position)
+        })
+
+      let background_color = case cell {
+        Error(_) -> "bg-white"
+        Ok(cell) -> background_color_class(cell.color)
+      }
+
+      let star =
+        list.find(runtime.remaining_stars, fn(star) {
+          position.equal(star.position, position)
+        })
+      let star = case star {
+        Error(_) -> element.fragment([])
+        Ok(_) -> {
+          html.div([attribute.class("text-white")], [icon.star()])
+        }
+      }
+
+      let player = runtime.player
+      let player = case position.equal(player.position, position) {
+        False -> element.fragment([])
+        True -> {
+          let degrees = case player.direction {
+            direction.North -> 0
+            direction.East -> 90
+            direction.South -> 180
+            direction.West -> 270
+          }
+          let rotate = int.to_string(degrees) <> "deg"
+
+          let color = case cell {
+            Ok(_) -> "text-white"
+            Error(_) -> "text-black"
+          }
+
+          html.div([attribute.class(color), attribute.style("rotate", rotate)], [
+            icon.player(),
+          ])
+        }
+      }
+
+      cell_component([attribute.classes([#(background_color, True)])], [
+        star,
+        player,
+      ])
+    })
 
   html.div(
     [
@@ -408,7 +475,9 @@ fn grid(runtime: runtime.Runtime) -> element.Element(Message) {
       attribute.styles([
         #(
           "grid-template-columns",
-          "repeat(" <> int.to_string(size.columns) <> ", var(--cell-size))",
+          "repeat("
+            <> int.to_string(columns_with_border)
+            <> ", var(--cell-size))",
         ),
       ]),
     ],
@@ -471,53 +540,13 @@ fn action_icon(action: program.Action) -> element.Element(Message) {
   }
 }
 
-fn cell(
-  runtime: runtime.Runtime,
-  position: position.Position,
+fn cell_component(
+  attrs: List(attribute.Attribute(Message)),
+  children: List(element.Element(Message)),
 ) -> element.Element(Message) {
-  let cell =
-    list.find(runtime.cells, fn(cell) {
-      position.equal(cell.position, position)
-    })
-
-  let background_color = case cell {
-    Error(_) -> "bg-white"
-    Ok(cell) -> background_color_class(cell.color)
-  }
-
-  let star =
-    list.find(runtime.remaining_stars, fn(star) {
-      position.equal(star.position, position)
-    })
-  let star = case star {
-    Error(_) -> element.fragment([])
-    Ok(_) -> {
-      html.div([attribute.class("text-white")], [icon.star()])
-    }
-  }
-
-  let player = runtime.player
-  let player = case position.equal(player.position, position) {
-    False -> element.fragment([])
-    True -> {
-      let degrees = case player.direction {
-        direction.North -> 0
-        direction.East -> 90
-        direction.South -> 180
-        direction.West -> 270
-      }
-      let rotate = int.to_string(degrees) <> "deg"
-      html.div(
-        [attribute.class("text-white"), attribute.style("rotate", rotate)],
-        [icon.player()],
-      )
-    }
-  }
-
   html.div(
     [
       attribute.class("rounded-2xl flex justify-center items-center"),
-      attribute.classes([#(background_color, True)]),
       attribute.styles([
         #("width", "var(--cell-size)"),
         #("height", "var(--cell-size)"),
@@ -526,7 +555,8 @@ fn cell(
           "0 0 8px 0 rgba(0, 0, 0, 0.08), 0 0 20px 0 rgba(0, 0, 0, 0.05);",
         ),
       ]),
+      ..attrs
     ],
-    [star, player],
+    children,
   )
 }

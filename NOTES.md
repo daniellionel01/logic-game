@@ -9,6 +9,8 @@
 
 - migrate to iv
 
+- drag'n drop function slots?
+
 - blog post
   - naming is hard, naming tests is harder
   - birdie rocks
