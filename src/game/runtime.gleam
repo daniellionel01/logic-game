@@ -9,6 +9,7 @@ import game/level
 import game/level/direction
 import game/position
 import game/program
+import gleam/bool
 import gleam/dict
 import gleam/list
 import gleam/result
@@ -16,7 +17,8 @@ import gleam/string
 
 /// This is the limit for how many instructions
 /// can be contained in the stack. Everything above
-/// this will be considered an overflow cause an error.
+/// this will be considered an overflow and cause
+/// the level to fail.
 ///
 pub const max_stack_size = 1000
 
@@ -57,6 +59,8 @@ pub fn fill_program_slots(
   Runtime(..runtime, program:)
 }
 
+/// Helpful function for debugging and testing!
+///
 pub fn to_string(runtime: Runtime) -> String {
   let program = program.to_string(runtime.program)
 
@@ -81,18 +85,15 @@ pub fn to_string(runtime: Runtime) -> String {
 ///
 pub fn is_lost(runtime: Runtime) -> Bool {
   let overflown = list.length(runtime.stack) >= max_stack_size
-  case overflown {
-    True -> True
-    False -> {
-      // If we do not find a cell for the player position, they
-      // are out of bounds, which means that the level is lost.
-      runtime.cells
-      |> list.find(fn(cell) {
-        position.equal(cell.position, runtime.player.position)
-      })
-      |> result.is_error
-    }
-  }
+  use <- bool.guard(when: overflown, return: True)
+
+  // If we do not find a cell for the player position, they
+  // are out of bounds, which means that the level is lost.
+  runtime.cells
+  |> list.find(fn(cell) {
+    position.equal(cell.position, runtime.player.position)
+  })
+  |> result.is_error
 }
 
 /// A level is won, if there are no remaining stars

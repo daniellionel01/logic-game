@@ -77,10 +77,10 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
         }
         program.Filled(instruction) -> {
           case instruction {
-            program.Instruction(action:, condition: program.Always) -> {
+            program.Instruction(action: _, condition: program.Always) -> {
               program.Filled(program.Instruction(action, program.Always))
             }
-            program.Instruction(action:, condition: program.WhenOn(color)) -> {
+            program.Instruction(action: _, condition: program.WhenOn(color)) -> {
               program.Filled(program.Instruction(action, program.WhenOn(color)))
             }
           }
@@ -113,8 +113,18 @@ fn update(model: Model, message: Message) -> #(Model, effect.Effect(Message)) {
             program.Instruction(action:, condition: program.Always) -> {
               program.Filled(program.Instruction(action, program.WhenOn(color)))
             }
-            program.Instruction(action:, condition: program.WhenOn(_)) -> {
-              program.Filled(program.Instruction(action, program.WhenOn(color)))
+            program.Instruction(action:, condition: program.WhenOn(prev_color)) -> {
+              case prev_color == color {
+                True -> {
+                  program.Filled(program.Instruction(action, program.Always))
+                }
+                False -> {
+                  program.Filled(program.Instruction(
+                    action,
+                    program.WhenOn(color),
+                  ))
+                }
+              }
             }
           }
         }
