@@ -1,0 +1,14 @@
+---
+version: 2.0.1
+title: runtime to string with level 3 and solution advances correctly
+---
+F0: [F, RR@r, F@r, RL, C(0)]
+
+STACK: [F, RR@r, F@r, RL, C(0)]
+
+rr........rR
+.>r......rr.
+..rr....rr..
+...rr..rr...
+....rrrr....
+.....bb.....

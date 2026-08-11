@@ -1,0 +1,19 @@
+---
+version: 2.0.1
+title: runtime to string with level 2 and solution program correctly
+file: ./test/game_test/runtime_test.gleam
+test_name: level_2_runtime_to_string_with_solution_program_test
+---
+F0: [F, RL, F, RR, C(0)]
+
+STACK: []
+
+........rR
+.......rr.
+......rr..
+.....rr...
+....rr....
+...rr.....
+..rr......
+.rr.......
+>r........

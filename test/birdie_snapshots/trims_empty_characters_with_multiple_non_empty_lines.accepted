@@ -1,0 +1,14 @@
+---
+version: 2.0.1
+title: trims empty characters with multiple non-empty lines
+file: ./test/game_test/level_test.gleam
+test_name: trim_empty_borders_with_multiple_non_empty_lines_test
+---
+------ INPUT
+.........
+.>gbrgbR.
+..gbrgb..
+.........
+------ OUTPUT
+>gbrgbR
+.gbrgb.

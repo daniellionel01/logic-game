@@ -1,0 +1,45 @@
+---
+version: 2.0.1
+title: level 8 parses correctly
+file: ./test/game_test/level_test.gleam
+test_name: parses_level_8_correctly_test
+---
+------ INPUT
+P=r
+f=5
+f=5
+.B..B....B...
+.r..r....r.B.
+.rB.r..B.r.r.
+.rr.rB.rBr.r.
+.rr.rr.rrrBr.
+.rr.rrBrrrrrB
+BrrBrrrrrrrrr
+rrrrrrrrrrrrr
+rrrrrrrrrrrrr
+>rrrrrrrrrrrr
+.rrrrrrrrrrr.
+..rrrrrrrrr..
+...rrrrrrr...
+....rrrrr....
+.....rrr.....
+
+------ OUTPUT
+P=r
+f=5
+f=5
+.B..B....B...
+.r..r....r.B.
+.rB.r..B.r.r.
+.rr.rB.rBr.r.
+.rr.rr.rrrBr.
+.rr.rrBrrrrrB
+BrrBrrrrrrrrr
+rrrrrrrrrrrrr
+rrrrrrrrrrrrr
+>rrrrrrrrrrrr
+.rrrrrrrrrrr.
+..rrrrrrrrr..
+...rrrrrrr...
+....rrrrr....
+.....rrr.....

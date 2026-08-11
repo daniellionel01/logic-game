@@ -1,0 +1,14 @@
+---
+version: 2.0.1
+title: trims empty characters with an empty column between non empty character columns
+file: ./test/game_test/level_test.gleam
+test_name: trim_empty_borders_with_non_empty_column_between_non_empty_test
+---
+------ INPUT
+.........
+.>g.rgbR.
+..g.rgb..
+.........
+------ OUTPUT
+>g.rgbR
+.g.rgb.

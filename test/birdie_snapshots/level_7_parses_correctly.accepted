@@ -1,0 +1,25 @@
+---
+version: 2.0.1
+title: level 7 parses correctly
+file: ./test/game_test/level_test.gleam
+test_name: parses_level_7_correctly_test
+---
+------ INPUT
+P=g
+f=4
+f=2
+..R..
+..r..
+Rr^rR
+..r..
+..R..
+
+------ OUTPUT
+P=g
+f=4
+f=2
+..R..
+..r..
+Rr^rR
+..r..
+..R..

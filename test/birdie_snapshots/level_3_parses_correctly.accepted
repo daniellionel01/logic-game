@@ -1,0 +1,25 @@
+---
+version: 2.0.1
+title: level 3 parses correctly
+file: ./test/game_test/level_test.gleam
+test_name: parses_level_3_correctly_test
+---
+------ INPUT
+P=r
+f=5
+>r........rR
+.rr......rr.
+..rr....rr..
+...rr..rr...
+....rrrr....
+.....bb.....
+
+------ OUTPUT
+P=r
+f=5
+>r........rR
+.rr......rr.
+..rr....rr..
+...rr..rr...
+....rrrr....
+.....bb.....

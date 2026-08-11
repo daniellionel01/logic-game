@@ -1,0 +1,21 @@
+name = "game"
+version = "1.0.0"
+target = "javascript"
+
+description = "A logic game"
+licences = ["MIT"]
+repository = { type = "github", user = "daniellionel01", repo = "logic-game" }
+
+[dependencies]
+gleam_stdlib = ">= 1.0.0 and < 2.0.0"
+lustre = ">= 5.7.0 and < 6.0.0"
+iv = ">= 1.4.4 and < 2.0.0"
+
+[dev_dependencies]
+gleeunit = ">= 1.0.0 and < 2.0.0"
+lustre_dev_tools = ">= 2.3.6 and < 3.0.0"
+birdie = ">= 2.0.1 and < 3.0.0"
+
+[tools.lustre.html]
+title = "A Logic Game"
+links = [{ rel="icon", href="/favicon.svg" }]
